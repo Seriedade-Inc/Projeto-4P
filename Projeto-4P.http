@@ -1,6 +1,0 @@
-@Projeto_4P_HostAddress = http://localhost:5285
-
-GET {{Projeto_4P_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
