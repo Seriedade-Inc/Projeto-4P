@@ -1,5 +1,4 @@
-namespace Projeto4pServer.Models
-
+namespace Projeto4pServer.Data
 {
     public class User
     {
