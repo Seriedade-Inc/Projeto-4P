@@ -26,4 +26,8 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Projeto4pSharedLibrary\Projeto4pSharedLibrary.csproj" />
+  </ItemGroup>
+
 </Project>
