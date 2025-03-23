@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
 using Projeto4pServer.Services;
+using System.ComponentModel.DataAnnotations;
 using BCrypt.Net;
 using System.Linq;
 using System.Net;
@@ -29,8 +30,8 @@ namespace Projeto4pServer.Controllers
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 return BadRequest("Não se esqueça de inserir um email ou senha.");
 
-            if (_context.User.Any(u => u.Email == userDto.Email))
-                return BadRequest("Email já está em uso.");
+            // if (_context.User.Any(u => u.Email == userDto.Email))
+            //     return BadRequest("Email já está em uso.");
 
             if (_context.User.Any(u => u.UserName == userDto.UserName))
                 return BadRequest("Este nome já está em uso.");
@@ -42,12 +43,22 @@ namespace Projeto4pServer.Controllers
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password)
             };
 
+            string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
+            string body = $"Olá {user.UserName},<br><br>Seu registro foi concluído com sucesso!";
+            try{
+                emailService.SendEmail(user.Email, subject, body);
+            }
+
+            catch (SmtpException ex){
+                return StatusCode(500, $"Erro ao enviar o e-mail: {ex.Message}");
+            }
+
+            catch{
+                return BadRequest("Insira um email válido.");
+            }
+            
             _context.User.Add(user);
             _context.SaveChanges();
-
-            string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
-            string body = $"Olá {user.Email},<br><br>Seu registro foi concluído com sucesso!";
-            emailService.SendEmail(user.Email, subject, body);
 
             return Ok(new { message = "Usuário registrado com sucesso!", userId = user.Id });
         }
