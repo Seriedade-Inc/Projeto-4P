@@ -39,7 +39,7 @@ namespace Projeto4pServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("User");
                 });
 #pragma warning restore 612, 618
         }

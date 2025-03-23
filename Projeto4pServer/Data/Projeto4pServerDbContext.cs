@@ -19,6 +19,6 @@ namespace Projeto4pServer.Data
             options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"));
         }
 
-        public DbSet<User> UserLogins { get; set; }
+        public DbSet<User> User { get; set; }
     }
 }

@@ -1,4 +1,20 @@
+version: "3.8"
+
 services:
+  app:
+    image: Email
+    build:
+      context: .
+      dockerfile: Dockerfile
+    dns:
+      - 8.8.8.8 # Usa o DNS público do Google
+      - 8.8.4.4
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=rpg_database;Username=postgres;Password=sua_senha
+    ports:
+      - "587:587"
+    depends_on:
+      - postgres
   postgres:
     image: postgres
     ports:
