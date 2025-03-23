@@ -194,10 +194,9 @@ namespace Projeto4pServer.Controllers
             return Ok(new { message = "Senha alterada com sucesso!" });
         }
 
-        [HttpDelete("{id}")]
-
-        public IActionResult DeleteUser(int id){
-            var user = _context.User.Find(id);
+        [HttpDelete("delete/{Id}")]
+        public IActionResult DeleteUser(Guid Id){
+            var user = _context.User.Find(Id);
 
             if (user == null)
                 return NotFound("Usuário não encontrado.");
@@ -205,7 +204,7 @@ namespace Projeto4pServer.Controllers
             _context.User.Remove(user);
             _context.SaveChanges();
 
-            return Ok(new { message = $"Id de número: {id} deletado com sucesso!" });
+            return Ok(new { message = $"Id de número: {Id} deletado com sucesso!" });
         }
     }
 }
