@@ -19,10 +19,12 @@ namespace Projeto4pServer.Controllers
         {
             _context = context;
         }
-
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterDto userDto, [FromServices] EmailService emailService)
         {
+
+            if (string.IsNullOrEmpty(userDto.UserName))
+                return BadRequest("Não se esqueça de inserir um nome");
 
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 return BadRequest("Não se esqueça de inserir um email ou senha.");
@@ -30,8 +32,12 @@ namespace Projeto4pServer.Controllers
             if (_context.User.Any(u => u.Email == userDto.Email))
                 return BadRequest("Email já está em uso.");
 
+            if (_context.User.Any(u => u.UserName == userDto.UserName))
+                return BadRequest("Este nome já está em uso.");
+
             var user = new User
             {
+                UserName = userDto.UserName,
                 Email = userDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password)
             };

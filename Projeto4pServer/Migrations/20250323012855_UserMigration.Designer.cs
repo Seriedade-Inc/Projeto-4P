@@ -11,8 +11,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250322195127_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250323012855_UserMigration")]
+    partial class UserMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace Projeto4pServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("text");
 
