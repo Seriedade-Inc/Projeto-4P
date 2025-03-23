@@ -12,8 +12,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250323044047_FinalUserPlease")]
-    partial class FinalUserPlease
+    [Migration("20250323211126_BancoDeDadosNovo2")]
+    partial class BancoDeDadosNovo2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

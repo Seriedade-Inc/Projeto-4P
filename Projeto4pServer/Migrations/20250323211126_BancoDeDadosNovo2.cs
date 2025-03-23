@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Projeto4pServer.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalUserPlease : Migration
+    public partial class BancoDeDadosNovo2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
