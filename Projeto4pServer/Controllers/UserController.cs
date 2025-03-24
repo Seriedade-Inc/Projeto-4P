@@ -99,8 +99,11 @@ namespace Projeto4pServer.Controllers
                 return Unauthorized("Credenciais incorretas, tente novamente.");
             }
 
+            var sessionId = Guid.NewGuid().ToString();
+
             var claims = new List<Claim>
             {
+                new("SessionId", sessionId),
                 new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.Email, user.Email)
@@ -125,7 +128,7 @@ namespace Projeto4pServer.Controllers
             {
                 return Unauthorized(new { authenticated = false });
             }
-            return Ok(new { authenticated = true, user = User.Identity.Name });
+            return Ok(new { authenticated = true, user = User.Identity.Name});
         }
 
         [HttpPost("logout")]
