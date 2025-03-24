@@ -45,7 +45,7 @@ namespace Projeto4pServer.Controllers
             if (_context.User.Any(u => u.Email == userDto.Email))
                 return BadRequest("Email já está em uso.");
 
-            if (_context.User.Any(u => u.UserName == userDto.UserName))
+            if (_context.User.Any(u => u.UserName.ToLower() == userDto.UserName.ToLower()))
                 return BadRequest("Este nome já está em uso.");
 
             var user = new User
@@ -75,8 +75,19 @@ namespace Projeto4pServer.Controllers
 
         [HttpGet]
         public IActionResult GetUsers()
-        {
+        {   
             var users = _context.User.ToList();
+            return Ok(users);                       
+        }
+
+        [HttpGet("{username}")]
+        public IActionResult GetByUserName(string? username = null)
+        {
+            var users = _context.User.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+            .OrderBy(u => u.UserName)
+            .ToList();
+            if (users.Count == 0)
+                return NotFound($"Nenhum usuário encontrado com o termo: '{username}'.");
             return Ok(users);
         }
 
@@ -191,7 +202,7 @@ namespace Projeto4pServer.Controllers
 
         [HttpDelete("delete/{email}")]
         public IActionResult DeleteUser(string email){
-            var user = _context.User.Find(email);
+            var user = _context.User.FirstOrDefault(u => u.Email == email);
 
             if (user == null)
                 return NotFound("Usuário não encontrado.");
@@ -199,7 +210,7 @@ namespace Projeto4pServer.Controllers
             _context.User.Remove(user);
             _context.SaveChanges();
 
-            return Ok(new { message = $"Id de número: {email} deletado com sucesso!" });
+            return Ok(new { message = $"O email: {email} foi deletado com sucesso!" });
         }
     }
 }
