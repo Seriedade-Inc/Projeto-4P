@@ -1,20 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Threading.Tasks;
 using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
 using Projeto4pServer.Services;
-using System.Net.Mail;
-using System.Security.Cryptography;
 using Projeto4pSharedLibrary.Classes;
 
+    
 namespace Projeto4pServer.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    [ApiController]
+    public class UserController(AppDbContext context, EmailService emailService) : ControllerBase
     {
-        private readonly AppDbContext _context;
-        private static Dictionary<string, string> resetCodes = new Dictionary<string, string>();
-        private string Generate6CharacterCode()
+        private readonly AppDbContext _context = context;
+        private readonly EmailService _emailService = emailService;
+        private static string Generate6CharacterCode()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             byte[] data = new byte[6];
@@ -27,10 +31,7 @@ namespace Projeto4pServer.Controllers
             return new string(result);
         }
 
-        public UserController(AppDbContext context)
-        {
-            _context = context;
-        }
+
         [HttpPost("register")]
         public IActionResult Register([FromBody] UserRegisterDto userDto, [FromServices] EmailService emailService)
         {
@@ -41,8 +42,8 @@ namespace Projeto4pServer.Controllers
             if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
                 return BadRequest("Não se esqueça de inserir um email ou senha.");
 
-            // if (_context.User.Any(u => u.Email == userDto.Email))
-            //     return BadRequest("Email já está em uso.");
+            if (_context.User.Any(u => u.Email == userDto.Email))
+                return BadRequest("Email já está em uso.");
 
             if (_context.User.Any(u => u.UserName == userDto.UserName))
                 return BadRequest("Este nome já está em uso.");
@@ -54,20 +55,18 @@ namespace Projeto4pServer.Controllers
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password)
             };
 
-            string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
-            string body = $"Olá {user.UserName},<br><br>Seu registro foi concluído com sucesso!";
-            try{
-                emailService.SendEmail(user.Email, subject, body);
-            }
+            // ! Esperar o aws ser configurado
 
-            catch (SmtpException ex){
-                return StatusCode(500, $"Erro ao enviar o e-mail: {ex.Message}");
-            }
+            // string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
+            // string body = $"Olá {user.UserName},<br><br>Seu registro foi concluído com sucesso!";
+            // try{
+            //     _ = _emailService.SendEmailAsync(user.Email, subject, body);
+            // }
 
-            catch{
-                return BadRequest("Insira um email válido.");
-            }
-            
+            // catch (Exception ex){
+            //     return StatusCode(500, $"Erro ao registrar o e-mail: {ex.Message}");
+            // }
+  
             _context.User.Add(user);
             _context.SaveChanges();
 
@@ -82,7 +81,7 @@ namespace Projeto4pServer.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login(UserLoginDto userDto)
+        public async Task<IActionResult> LoginAsync(UserLoginDto userDto)
         {
             User? user = null;
 
@@ -100,45 +99,41 @@ namespace Projeto4pServer.Controllers
                 return Unauthorized("Credenciais incorretas, tente novamente.");
             }
 
-            var cookieOptions = new CookieOptions { HttpOnly = true };
-            if (userDto.RememberMe)
+            var claims = new List<Claim>
             {
-                cookieOptions.Expires = DateTime.UtcNow.AddMonths(1);
-            }
-            Response.Cookies.Append("UserId", user.Id.ToString(), cookieOptions);
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email)
+            };
+            
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-            // Log the cookie setting for debugging
-            Console.WriteLine($"Cookie set: UserId={user.Id}, Expires={cookieOptions.Expires}");
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                authProperties
+             );
 
-            return Ok(new { message = "Login bem-sucedido!" });
+            return Ok(new { message = "Login successful" });
         }
 
         [HttpGet("check-auth")]
         public IActionResult CheckAuth()
         {
-            if (Request.Cookies.TryGetValue("UserId", out var userId))
+            if ((User.Identity?.IsAuthenticated) != true)
             {
-                var user = _context.User.Find(int.Parse(userId));
-                if (user != null)
-                {
-                    return Ok(new { message = "Usuário autenticado", userId = user.Id });
-                }
+                return Unauthorized(new { authenticated = false });
             }
-
-            return Unauthorized("Usuário não autenticado");
+            return Ok(new { authenticated = true, user = User.Identity.Name });
         }
 
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            // Remove the authentication cookie
-            if (Request.Cookies.ContainsKey("UserId"))
-            {
-                Response.Cookies.Delete("UserId");
-            }
-
-            return Ok(new { message = "Logout bem-sucedido!" });
-        }
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok(new { message = "Logged out" });
+        } 
 
         [HttpPost("request-password-reset")]
         public IActionResult RequestPasswordReset([FromBody] UserEmailDto userEmailDto, [FromServices] EmailService emailService)
@@ -146,8 +141,9 @@ namespace Projeto4pServer.Controllers
             var user = _context.User.FirstOrDefault(u => u.Email == userEmailDto.Email);
 
             if (user == null)
+            {
                 return NotFound("Usuário não encontrado.");
-
+            }
             var resetCode = Generate6CharacterCode();
             user.ResetCode = resetCode;
             user.ResetCodeExpiration = DateTime.UtcNow.AddMinutes(15);
@@ -158,15 +154,11 @@ namespace Projeto4pServer.Controllers
 
             try
             {
-                emailService.SendEmail(user.Email, subject, body);
+                _ = _emailService.SendEmailAsync(user.Email, subject, body);
             }
-            catch (SmtpException ex)
+            catch (Exception ex)
             {
                 return StatusCode(500, $"Erro ao enviar o e-mail: {ex.Message}");
-            }
-            catch
-            {
-                return BadRequest("Insira um email válido.");
             }
 
             return Ok(new { message = "Código de redefinição de senha enviado com sucesso!" });
@@ -194,9 +186,9 @@ namespace Projeto4pServer.Controllers
             return Ok(new { message = "Senha alterada com sucesso!" });
         }
 
-        [HttpDelete("delete/{Id}")]
-        public IActionResult DeleteUser(Guid Id){
-            var user = _context.User.Find(Id);
+        [HttpDelete("delete/{email}")]
+        public IActionResult DeleteUser(string email){
+            var user = _context.User.Find(email);
 
             if (user == null)
                 return NotFound("Usuário não encontrado.");
@@ -204,7 +196,7 @@ namespace Projeto4pServer.Controllers
             _context.User.Remove(user);
             _context.SaveChanges();
 
-            return Ok(new { message = $"Id de número: {Id} deletado com sucesso!" });
+            return Ok(new { message = $"Id de número: {email} deletado com sucesso!" });
         }
     }
 }
