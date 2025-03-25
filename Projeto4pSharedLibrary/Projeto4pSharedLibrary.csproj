@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Dodo.Primitives" Version="4.1.0" />
+    <PackageReference Include="Ulid" Version="1.3.4" />
+  </ItemGroup>
+
 </Project>

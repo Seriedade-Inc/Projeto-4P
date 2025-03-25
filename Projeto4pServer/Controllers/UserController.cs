@@ -83,7 +83,10 @@ namespace Projeto4pServer.Controllers
         [HttpGet("{username}")]
         public IActionResult GetByUserName(string? username = null)
         {
-            var users = _context.User.Where(u => u.UserName.ToLower().Contains(username.ToLower()))
+            if (string.IsNullOrEmpty(username))
+                return BadRequest("Username cannot be null or empty.");
+
+            var users = _context.User.Where(u => u.UserName.Contains(username, StringComparison.CurrentCultureIgnoreCase))
             .OrderBy(u => u.UserName)
             .ToList();
             if (users.Count == 0)

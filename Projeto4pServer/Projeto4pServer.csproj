@@ -13,6 +13,7 @@
     <PackageReference Include="AWSSDK.SecurityToken" Version="3.7.1.71" />
     <PackageReference Include="AWSSDK.SimpleEmail" Version="3.7.0.0" />
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="Dodo.Primitives" Version="4.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.3">
