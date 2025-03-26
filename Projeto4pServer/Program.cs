@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        //options.LoginPath = "/api/user/login"; //Caminho do login, apenas quando chegar la pfv
+        //options.LoginPath = "/api/user/login"; //! Caminho do login, apenas quando chegar la pfv
         //options.LogoutPath = "/api/user/logout";
         options.Cookie.HttpOnly = true;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Secure cookies for HTTPS
