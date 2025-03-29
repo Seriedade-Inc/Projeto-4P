@@ -24,7 +24,6 @@
             @if (isRegistering)
             {
                 <h2 class="text-lg text-gray-50 font-bold mb-4">Register</h2>
-<<<<<<< HEAD
                 <form @onsubmit="HandleRegister">
                     <div class="mb-4">
                         <label class="block text-white">UserName</label>
@@ -39,17 +38,6 @@
                         <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
-=======
-                <form>
-                    <div class="mb-4">
-                        <label class="block text-white">Email</label>
-                        <input type="email" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" />
-                    </div>
->>>>>>> 2fb482397b04600614ed245113bc6f6fed5f72fe
                     <div class="flex justify-end">
                         <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Already have an account? Log in!</button>
                         <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
@@ -60,7 +48,6 @@
             else
             {
                 <h2 class="text-lg text-gray-50 font-bold mb-4">Login</h2>
-<<<<<<< HEAD
                 <form @onsubmit="HandleLogin">
                     <div class="mb-4">
                         <label class="block text-white">Email or Username</label>
@@ -71,17 +58,6 @@
                         <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
-=======
-                <form>
-                    <div class="mb-4">
-                        <label class="block text-white">Email</label>
-                        <input type="text" class="w-full border rounded px-3 py-2" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" />
-                    </div>
->>>>>>> 2fb482397b04600614ed245113bc6f6fed5f72fe
                     <div class="flex justify-end">
                         <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Not registered? Sign in!</button>
                         <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
@@ -97,7 +73,6 @@
     private bool isLoginPopupVisible = false;
     private bool isRegistering = false;
 
-<<<<<<< HEAD
     private string username = string.Empty; // Para registro
     private string email = string.Empty; 
     private string password = string.Empty;
@@ -152,33 +127,25 @@
         }
     }
 
-=======
->>>>>>> 2fb482397b04600614ed245113bc6f6fed5f72fe
     private void ToggleLoginPopup()
     {
         isLoginPopupVisible = !isLoginPopupVisible;
         if (!isLoginPopupVisible)
         {
             isRegistering = false; // Reset to login when popup is closed
-<<<<<<< HEAD
             username = string.Empty;
             email = string.Empty;
             password = string.Empty;
             errorMessage = string.Empty;
-=======
->>>>>>> 2fb482397b04600614ed245113bc6f6fed5f72fe
         }
     }
 
     private void ToggleRegistering()
     {
         isRegistering = !isRegistering;
-<<<<<<< HEAD
         username = string.Empty;
         email = string.Empty;
         password = string.Empty;
         errorMessage = string.Empty;
-=======
->>>>>>> 2fb482397b04600614ed245113bc6f6fed5f72fe
     }
 }
