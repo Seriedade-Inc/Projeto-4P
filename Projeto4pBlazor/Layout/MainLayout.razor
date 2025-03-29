@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject HttpClient Http
 
 <header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-4">
     <div class="flex items-center space-x-4 bg-gray-800 rounded-full p-2">
@@ -9,9 +10,142 @@
         <button class="text-white hover:bg-red-500 rounded-full px-4 py-2">Compendium</button>
     </div>
     <div class="bg-gray-800 rounded-full p-2">
-        <button class="text-white hover:bg-red-500 rounded-full px-4 py-2">Login</button>
+        <button class="text-white hover:bg-red-500 rounded-full px-4 py-2" @onclick="ToggleLoginPopup">Login</button>
     </div>
 </header>
 <main class="pt-16">
     @Body
 </main>
+
+@if (isLoginPopupVisible)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-gray-700 p-6 rounded shadow-lg">
+            @if (isRegistering)
+            {
+                <h2 class="text-lg text-gray-50 font-bold mb-4">Register</h2>
+                <form @onsubmit="HandleRegister">
+                    <div class="mb-4">
+                        <label class="block text-white">UserName</label>
+                        <input type="text" class="w-full border rounded px-3 py-2" @bind="username" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white">Email</label>
+                        <input type="email" class="w-full border rounded px-3 py-2" @bind="email" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white">Password</label>
+                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                    </div>
+                    <div class="text-red-500">@errorMessage</div>
+                    <div class="flex justify-end">
+                        <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Already have an account? Log in!</button>
+                        <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded ml-2">Register</button>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <h2 class="text-lg text-gray-50 font-bold mb-4">Login</h2>
+                <form @onsubmit="HandleLogin">
+                    <div class="mb-4">
+                        <label class="block text-white">Email or Username</label>
+                        <input type="text" class="w-full border rounded px-3 py-2" @bind="email" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white">Password</label>
+                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                    </div>
+                    <div class="text-red-500">@errorMessage</div>
+                    <div class="flex justify-end">
+                        <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Not registered? Sign in!</button>
+                        <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded ml-2">Login</button>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private bool isLoginPopupVisible = false;
+    private bool isRegistering = false;
+
+    private string username = string.Empty; // Para registro
+    private string email = string.Empty; 
+    private string password = string.Empty;
+    private string errorMessage = string.Empty;
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/User/register", new { userName = username, Email = email, Password = password });
+            if (response.IsSuccessStatusCode)
+            {
+                // Registro bem-sucedido
+                var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                Console.WriteLine($"Registration successful: {result}");
+                ToggleRegistering();
+                errorMessage = "Registrado com Sucesso!";
+            }
+            else
+            {   
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = "Registration failed. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/User/login", new { Email = email, Password = password });
+            if (response.IsSuccessStatusCode)
+            {
+                // Login bem-sucedido
+                var result = await response.Content.ReadFromJsonAsync<dynamic>();
+                Console.WriteLine($"Login successful: {result}");
+                ToggleLoginPopup();
+            }
+            else
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                errorMessage = "Login failed. Please check your credentials.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private void ToggleLoginPopup()
+    {
+        isLoginPopupVisible = !isLoginPopupVisible;
+        if (!isLoginPopupVisible)
+        {
+            isRegistering = false; // Reset to login when popup is closed
+            username = string.Empty;
+            email = string.Empty;
+            password = string.Empty;
+            errorMessage = string.Empty;
+        }
+    }
+
+    private void ToggleRegistering()
+    {
+        isRegistering = !isRegistering;
+        username = string.Empty;
+        email = string.Empty;
+        password = string.Empty;
+        errorMessage = string.Empty;
+    }
+}
