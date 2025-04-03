@@ -20,10 +20,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         //options.LoginPath = "/api/user/login"; //! Caminho do login, apenas quando chegar la pfv
         //options.LogoutPath = "/api/user/logout";
         options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Secure cookies for HTTPS
-        options.Cookie.SameSite = SameSiteMode.Strict; // Prevent CSRF
-        options.ExpireTimeSpan = TimeSpan.FromDays(10); // Session expiration
-        options.SlidingExpiration = true; // Extend session if active
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.Strict;
+        options.ExpireTimeSpan = TimeSpan.FromDays(10);
+        options.SlidingExpiration = true;
     });
 
 builder.Services.AddAuthorization();
@@ -33,7 +33,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("BlazorPolicy", policy =>
     {
-        policy.WithOrigins("http://localhost:5069") // URL do Blazor
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -51,7 +51,6 @@ if (app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseCors("BlazorPolicy");
 app.UseAuthorization();
-app.UseAuthentication();
 app.MapControllers();   
 
 app.Run();
