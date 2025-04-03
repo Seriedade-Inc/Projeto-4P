@@ -19,7 +19,7 @@
 
 @if (isLoginPopupVisible)
 {
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="fixed inset-0 flex bg-opacity-50 backdrop-blur-md items-center justify-center">
         <div class="bg-gray-700 p-6 rounded shadow-lg">
             @if (isRegistering)
             {
@@ -27,15 +27,15 @@
                 <form @onsubmit="HandleRegister">
                     <div class="mb-4">
                         <label class="block text-white">UserName</label>
-                        <input type="text" class="w-full border rounded px-3 py-2" @bind="username" />
+                        <input type="text" class="w-full border rounded text-white px-3 py-2" @bind="username" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Email</label>
-                        <input type="email" class="w-full border rounded px-3 py-2" @bind="email" />
+                        <input type="email" class="w-full border rounded text-white px-3 py-2" @bind="email" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                        <input type="password" class="w-full border rounded text-white px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
                     <div class="flex justify-end">
@@ -51,11 +51,11 @@
                 <form @onsubmit="HandleLogin">
                     <div class="mb-4">
                         <label class="block text-white">Email or Username</label>
-                        <input type="text" class="w-full border rounded px-3 py-2" @bind="email" />
+                        <input type="text" class="w-full border rounded text-white px-3 py-2" @bind="email" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                        <input type="password" class="w-full border rounded text-white px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
                     <div class="flex justify-end">

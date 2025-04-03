@@ -57,15 +57,15 @@ namespace Projeto4pServer.Controllers
 
             // ! Esperar o aws ser configurado
 
-            string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
-            string body = $"Olá {user.UserName},<br><br>Seu registro foi concluído com sucesso!";
-            try{
-                _ = _emailService.SendEmailAsync(user.Email, subject, body);
-            }
+            // string subject = "Bem-vindo ao nosso sistema, eu fiz isso por código!";
+            // string body = $"Olá {user.UserName},<br><br>Seu registro foi concluído com sucesso!";
+            // try{
+            //     _ = _emailService.SendEmailAsync(user.Email, subject, body);
+            // }
 
-            catch (Exception ex){
-                return StatusCode(500, $"Erro ao registrar o e-mail: {ex.Message}");
-            }
+            // catch (Exception ex){
+            //     return StatusCode(500, $"Erro ao registrar o e-mail: {ex.Message}");
+            // }
   
             _context.User.Add(user);
             _context.SaveChanges();
