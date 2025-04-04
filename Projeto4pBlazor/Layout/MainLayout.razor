@@ -1,14 +1,14 @@
 ﻿@inherits LayoutComponentBase
 @inject HttpClient Http
 
-<header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-4 border border-white">
+<header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-2 border-b border-white">
     <div class="flex items-end p-2">
         <h1 class="text-4xl font-bebas-neue font-mono text-white">
             //:TEMERITY
         </h1>
     </div>
     <div>
-        <button class="ring-2 text-white hover:bg-fuchsia-600 rounded-full px-8 py-4 shadow-lg hover:shadow-fuchsia-600 text-lg" @onclick="ToggleLoginPopup">Login</button>
+        <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ToggleLoginPopup">Login</button>
     </div>
 </header>
 <main class="pt-16">
@@ -18,28 +18,28 @@
 @if (isLoginPopupVisible)
 {
     <div class="fixed inset-0 flex bg-opacity-50 backdrop-blur-md items-center justify-center">
-        <div class="bg-gray-700 p-6 rounded shadow-lg">
+        <div class="bg-neutral-900 p-6 rounded shadow-lg">
             @if (isRegistering)
             {
                 <h2 class="text-lg text-gray-50 font-bold mb-4">Register</h2>
                 <form @onsubmit="HandleRegister">
                     <div class="mb-4">
                         <label class="block text-white">UserName</label>
-                        <input type="text" class="w-full border rounded px-3 py-2" @bind="username" />
+                        <input type="text" class="w-full border rounded text-white px-3 py-2" @bind="username" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Email</label>
-                        <input type="email" class="w-full border rounded px-3 py-2" @bind="email" />
+                        <input type="email" class="w-full border rounded text-white px-3 py-2" @bind="email" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                        <input type="password" class="w-full border rounded text-white px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
                     <div class="flex justify-end">
                         <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Already have an account? Log in!</button>
-                        <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded ml-2">Register</button>
+                        <button type="button" class="bg-red-950 hover:bg-red-900 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
+                        <button type="submit" class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded ml-2">Register</button>
                     </div>
                 </form>
             }
@@ -49,17 +49,17 @@
                 <form @onsubmit="HandleLogin">
                     <div class="mb-4">
                         <label class="block text-white">Email or Username</label>
-                        <input type="text" class="w-full border rounded px-3 py-2" @bind="email" />
+                        <input type="text" class="w-full border rounded text-white px-3 py-2" @bind="email" />
                     </div>
                     <div class="mb-4">
                         <label class="block text-white">Password</label>
-                        <input type="password" class="w-full border rounded px-3 py-2" @bind="password" />
+                        <input type="password" class="w-full border rounded text-white px-3 py-2" @bind="password" />
                     </div>
                     <div class="text-red-500">@errorMessage</div>
                     <div class="flex justify-end">
                         <button class="text-white text-sm underline hover:text-cyan-400 mr-2" @onclick="ToggleRegistering">Not registered? Sign in!</button>
-                        <button type="button" class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded ml-2">Login</button>
+                        <button type="button" class="bg-red-950 hover:bg-red-900 text-white px-4 py-2 rounded" @onclick="ToggleLoginPopup">Close</button>
+                        <button type="submit" class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded ml-2">Login</button>
                     </div>
                 </form>
             }

@@ -7,5 +7,12 @@
     font-weight: 400;
     font-style: normal;
   }
+.cain-button {
+    transition: box-shadow 0.3s ease;
+}
 
-  @import "tailwindcss";
+.cain-button:hover {
+    box-shadow: inset 1px 1px 5px 4px #a800b7,0px 0px 5px 4px #a800b7;
+}
+
+@import "tailwindcss";
