@@ -1,5 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-.font-bebas-neue {
-    font-family: 'Bebas Neue', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Dirt&display=swap');
+@theme {
+    
+   
+    --font-bebas: "Bebas Neue", "sans-serif";
+    --font-rubikDirt: "Rubik Dirt", "sans-serif";
+
+    /* ... */
+  }
+
+  .cain-button {
+    transition: box-shadow 0.3s ease;
 }
+
+.cain-button:hover {
+    box-shadow: inset 1px 1px 5px 4px #7008e7,0px 0px 5px 4px #7008e7;
+}
+
 @import "tailwindcss";
