@@ -19,5 +19,6 @@ namespace Projeto4pServer.Data
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Character> Characters { get; set; }
     }
 }
