@@ -14,9 +14,12 @@
   --color-cyan-400: oklch(0.789 0.154 211.53);
   --color-indigo-900: oklch(0.359 0.144 278.697);
   --color-indigo-950: oklch(0.257 0.09 281.288);
+  --color-purple-600: oklch(0.558 0.288 302.321);
+  --color-purple-700: oklch(0.496 0.265 301.924);
   --color-purple-800: oklch(0.438 0.218 303.724);
   --color-gray-50: oklch(0.985 0.002 247.839);
   --color-gray-600: oklch(0.446 0.03 256.802);
+  --color-gray-800: oklch(0.278 0.033 256.848);
   --color-neutral-900: oklch(0.205 0 0);
   --color-black: #000;
   --color-white: #fff;
@@ -312,11 +315,17 @@
   .bg-black {
     background-color: var(--color-black);
   }
+  .bg-gray-800 {
+    background-color: var(--color-gray-800);
+  }
   .bg-indigo-950 {
     background-color: var(--color-indigo-950);
   }
   .bg-neutral-900 {
     background-color: var(--color-neutral-900);
+  }
+  .bg-purple-600 {
+    background-color: var(--color-purple-600);
   }
   .bg-red-950 {
     background-color: var(--color-red-950);
@@ -447,6 +456,13 @@
       }
     }
   }
+  .hover\:bg-purple-700 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-purple-700);
+      }
+    }
+  }
   .hover\:bg-red-900 {
     &:hover {
       @media (hover: hover) {
@@ -458,6 +474,13 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-cyan-400);
+      }
+    }
+  }
+  .hover\:underline {
+    &:hover {
+      @media (hover: hover) {
+        text-decoration-line: underline;
       }
     }
   }
