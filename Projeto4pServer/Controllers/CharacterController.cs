@@ -1,83 +1,123 @@
-// using Microsoft.AspNetCore.Mvc;
-// using Projeto4pServer.Data;
-// using Projeto4pSharedLibrary.Classes;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Projeto4pServer.Data;
+using Projeto4pSharedLibrary.Classes;
 
-// namespace Projeto4pServer.Controllers
-// {
-//     [Route("api/User/{userId}/[controller]")]
-//     [ApiController]
-//     public class CharacterController : ControllerBase
-//     {
-//         private readonly AppDbContext _context;
+namespace Projeto4pServer.Controllers
+{
+    [Route("api/User/[controller]")]
+    [ApiController]
+    public class CharacterController : ControllerBase
+    {
+        private readonly AppDbContext _context;
 
-//         public CharacterController(AppDbContext context)
-//         {
-//             _context = context;
-//         }
+        public CharacterController(AppDbContext context)
+        {
+            _context = context;
+        }
 
-//         // GET: api/User/{userId}/Character
-//         [HttpGet]
-//         public IActionResult GetCharacters(Guid userId)
-//         {
-//             var characters = _context.Characters.Where(c => c.UserId == userId).ToList();
-//             if (!characters.Any())
-//                 return NotFound("No characters found for this user.");
+        // GET: api/User/Character
+        [HttpGet]
+        public IActionResult GetCharacters([FromQuery] long? id, [FromQuery] Guid? userId)
+        {
+            if (id.HasValue)
+            {
+                // Retorna o personagem específico pelo ID
+                var character = _context.Characters.FirstOrDefault(c => c.Id == id.Value);
+                if (character == null)
+                    return NotFound("Character not found.");
 
-//             return Ok(characters);
-//         }
+                return Ok(character);
+            }
 
-//         // POST: api/User/{userId}/Character
-//         [HttpPost]
-//         public IActionResult CreateCharacter(Guid userId, [FromBody] Character character)
-//         {
-//             var user = _context.Users.Find(userId);
-//             if (user == null)
-//                 return NotFound("User not found.");
+            if (userId.HasValue)
+            {
+                // Retorna todos os personagens associados ao usuário
+                var userCharacters = _context.Characters.Where(c => c.UserId == userId.Value).ToList();
+                if (!userCharacters.Any())
+                    return NotFound("No characters found for this user.");
 
-//             character.UserId = userId;
-//             _context.Characters.Add(character);
-//             _context.SaveChanges();
+                return Ok(userCharacters);
+            }
 
-//             return CreatedAtAction(nameof(GetCharacters), new { userId = userId }, character);
-//         }
+            // Retorna todos os personagens existentes
+            var allCharacters = _context.Characters.ToList();
+            return Ok(allCharacters);
+        }
+        // POST: api/User/Character
+        [HttpPost("create")]
+        public IActionResult CreateCharacter(Guid userId, [FromBody] Character character)
+        {
+            var user = _context.User.Find(userId);
+            if (user == null)
+                return NotFound("User not found.");
 
-//         // PUT: api/User/{userId}/Character/{id}
-//         [HttpPut("{id}")]
-//         public IActionResult UpdateCharacter(Guid userId, long id, [FromBody] Character updatedCharacter)
-//         {
-//             var character = _context.Characters.FirstOrDefault(c => c.Id == id && c.UserId == userId);
-//             if (character == null)
-//                 return NotFound("Character not found.");
+            character.UserId = userId;
+            foreach (var inventory in character.Inventories)
+            {
+                inventory.Character = null; // Remove a referência ao Character
+            }
+            _context.Characters.Add(character);
+            _context.SaveChanges();
 
-//             character.Name = updatedCharacter.Name;
-//             character.Background = updatedCharacter.Background;
-//             character.Stats = updatedCharacter.Stats;
-//             character.MaxStats = updatedCharacter.MaxStats;
-//             character.HP = updatedCharacter.HP;
-//             character.Armor = updatedCharacter.Armor;
-//             character.Gold = updatedCharacter.Gold;
-//             character.Traits = updatedCharacter.Traits;
-//             character.Bonds = updatedCharacter.Bonds;
-//             character.Omens = updatedCharacter.Omens;
-//             character.Deprived = updatedCharacter.Deprived;
+            var characterDto = new CharacterDto
+            {   
+                Name = character.Name,
+                Inventories = character.Inventories.Select(i => new InventoryDto
+                {
+                    ItemName = i.ItemName,
+                    Quantity = i.Quantity
+                }).ToList()
+            };
 
-//             _context.SaveChanges();
+            return CreatedAtAction(nameof(GetCharacters), new {userId = userId, id = character.Id}, characterDto);
+        }
 
-//             return Ok(character);
-//         }
+        // PUT: api/User/Character/{id}
+        [HttpPut("{id}")]
+        public IActionResult UpdateCharacter(Guid userId, long id, [FromBody] Character updatedCharacter)
+        {
+            var character = _context.Characters.FirstOrDefault(c => c.Id == id && c.UserId == userId);
+            if (character == null)
+                return NotFound("Character not found.");
 
-//         // DELETE: api/User/{userId}/Character/{id}
-//         [HttpDelete("{id}")]
-//         public IActionResult DeleteCharacter(Guid userId, long id)
-//         {
-//             var character = _context.Characters.FirstOrDefault(c => c.Id == id && c.UserId == userId);
-//             if (character == null)
-//                 return NotFound("Character not found.");
+            character.Name = updatedCharacter.Name;
+            character.CharacterXID = updatedCharacter.CharacterXID;
+            character.Agenda = updatedCharacter.Agenda;
+            character.Blasfemia = updatedCharacter.Blasfemia;
+            character.Gender = updatedCharacter.Gender;
+            character.Heigth = updatedCharacter.Heigth;
+            character.Weigth = updatedCharacter.Weigth;
+            character.HairColor = updatedCharacter.HairColor;
+            character.EyeColor = updatedCharacter.EyeColor;
+            character.CAT = updatedCharacter.CAT;
+            character.DivineAgony = updatedCharacter.DivineAgony;
+            character.XP = updatedCharacter.XP;
+            character.Advance = updatedCharacter.Advance;
+            character.KitPoints = updatedCharacter.KitPoints;
+            character.Inventories = updatedCharacter.Inventories;
+            character.Burst = updatedCharacter.Burst;
+            character.SinOverflow = updatedCharacter.SinOverflow;
+            character.Marks = updatedCharacter.Marks;
 
-//             _context.Characters.Remove(character);
-//             _context.SaveChanges();
 
-//             return Ok(new { message = "Character deleted successfully." });
-//         }
-//     }
-// }
+            _context.SaveChanges();
+
+            return Ok(character);
+        }
+
+        // DELETE: api/User/Character/{id}
+        [HttpDelete("delete/{id}")]
+        public IActionResult DeleteCharacter(long id)
+        {
+            var character = _context.Characters.FirstOrDefault(c => c.Id == id);
+            if (character == null)
+                return NotFound("Character not found.");
+
+            _context.Characters.Remove(character);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Character deleted successfully." });
+        }
+    }
+}
