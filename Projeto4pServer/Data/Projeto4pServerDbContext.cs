@@ -21,6 +21,7 @@ namespace Projeto4pServer.Data
         public DbSet<User> User { get; set; }
         public DbSet<Character> Characters { get; set; }
         public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Agenda> Agendas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +39,12 @@ namespace Projeto4pServer.Data
                 .WithOne() // Um Character não precisa de uma propriedade de navegação para o User
                 .HasForeignKey(c => c.UserId) // Chave estrangeira em Character
                 .OnDelete(DeleteBehavior.Cascade); // Deleção em cascata
+
+            modelBuilder.Entity<Agenda>(entity =>
+            {
+                entity.HasKey(a => a.Id); // Define a chave primária
+                entity.Property(a => a.AgendaName).IsRequired(); // Exemplo de configuração
+            });
 
         }   
     }

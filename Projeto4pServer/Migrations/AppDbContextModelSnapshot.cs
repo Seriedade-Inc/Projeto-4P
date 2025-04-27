@@ -23,6 +23,61 @@ namespace Projeto4pServer.Migrations.AppDb
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AgendaName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("BoldItem")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NormalItem")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("SpecialRule")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Agendas");
+                });
+
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AbilityName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("AgendaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgendaId");
+
+                    b.ToTable("AgendaAbilities");
+                });
+
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
                 {
                     b.Property<long>("Id")
@@ -162,6 +217,17 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.ToTable("User");
                 });
 
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
+                {
+                    b.HasOne("Projeto4pSharedLibrary.Classes.Agenda", "Agenda")
+                        .WithMany("Abilities")
+                        .HasForeignKey("AgendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agenda");
+                });
+
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
                 {
                     b.HasOne("Projeto4pSharedLibrary.Classes.User", null)
@@ -180,6 +246,11 @@ namespace Projeto4pServer.Migrations.AppDb
                         .IsRequired();
 
                     b.Navigation("Character");
+                });
+
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
+                {
+                    b.Navigation("Abilities");
                 });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>

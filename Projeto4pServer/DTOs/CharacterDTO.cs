@@ -1,7 +1,59 @@
-public class CharacterDto
+// DTO para POST
+public class CreateCharacterDto
 {
     public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string Agenda { get; set; } = string.Empty;
+    public string Blasfemia { get; set; } = string.Empty;
+    public string Gender { get; set; } = string.Empty;
+    public string Heigth { get; set; } = string.Empty;
+    public string Weigth { get; set; } = string.Empty;
+    public string HairColor { get; set; } = string.Empty;
+    public string EyeColor { get; set; } = string.Empty;
+    public int CAT { get; set; }
+    public int DivineAgony { get; set; }
+    public int Stress { get; set; }
+    public int Injury { get; set; }
+    public int XP { get; set; }
+    public int Advance { get; set; }
+    public int KitPoints { get; set; }
     public List<InventoryDto> Inventories { get; set; } = new List<InventoryDto>();
-    
+    public int Burst { get; set; }
+    public int SinOverflow { get; set; }
+    public List<int> Marks { get; set; } = new List<int>();
+}
+
+// DTO para PUT
+public class UpdateCharacterDto
+{
+    public string Name { get; set; } = string.Empty;
+    public string Agenda { get; set; } = string.Empty;
+    public string Blasfemia { get; set; } = string.Empty;
+    public string Gender { get; set; } = string.Empty;
+    public string Heigth { get; set; } = string.Empty;
+    public string Weigth { get; set; } = string.Empty;
+    public string HairColor { get; set; } = string.Empty;
+    public string EyeColor { get; set; } = string.Empty;
+    public int CAT { get; set; }
+    public int DivineAgony { get; set; }
+    public int Stress { get; set; }
+    public int Injury { get; set; }
+    public int XP { get; set; }
+    public int Advance { get; set; }
+    public int KitPoints { get; set; }
+    public List<InventoryDto> Inventories { get; set; } = new List<InventoryDto>();
+    public int Burst { get; set; }
+    public int SinOverflow { get; set; }
+    public List<int> Marks { get; set; } = new List<int>();
+}
+
+// DTO para GET
+public class CharacterDto
+{
+    public long Id { get; set; }
+    public Guid UserId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Agenda { get; set; } = string.Empty;
+    public string Gender { get; set; } = string.Empty;
+    public List<InventoryDto> Inventories { get; set; } = new List<InventoryDto>();
 }

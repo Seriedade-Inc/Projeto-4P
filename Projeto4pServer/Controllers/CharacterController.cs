@@ -23,7 +23,10 @@ namespace Projeto4pServer.Controllers
             if (id.HasValue)
             {
                 // Retorna o personagem específico pelo ID
-                var character = _context.Characters.FirstOrDefault(c => c.Id == id.Value);
+                var character = _context.Characters
+                .Include(c => c.Inventories)
+                .FirstOrDefault(c => c.Id == id.Value);
+                
                 if (character == null)
                     return NotFound("Character not found.");
 
@@ -46,30 +49,47 @@ namespace Projeto4pServer.Controllers
         }
         // POST: api/User/Character
         [HttpPost("create")]
-        public IActionResult CreateCharacter(Guid userId, [FromBody] Character character)
+        public IActionResult CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto)
         {
             var user = _context.User.Find(userId);
             if (user == null)
                 return NotFound("User not found.");
 
-            character.UserId = userId;
-            foreach (var inventory in character.Inventories)
-            {
-                inventory.Character = null; // Remove a referência ao Character
-            }
-            _context.Characters.Add(character);
-            _context.SaveChanges();
+            // character.UserId = userId;
+            // foreach (var inventory in character.Inventories)
+            // {
+            //     inventory.Character = null; // Remove a referência ao Character
+            // }
 
-            var characterDto = new CharacterDto
+            var character = new Character
             {   
-                Name = character.Name,
-                Inventories = character.Inventories.Select(i => new InventoryDto
+                Name = characterDto.Name,
+                Agenda = characterDto.Agenda,
+                Blasfemia = characterDto.Blasfemia,
+                Gender = characterDto.Gender,
+                Heigth = characterDto.Heigth,
+                Weigth = characterDto.Weigth,
+                HairColor = characterDto.HairColor,
+                EyeColor = characterDto.EyeColor,
+                CAT = characterDto.CAT,
+                DivineAgony = characterDto.DivineAgony,
+                Stress = characterDto.Stress,
+                Injury = characterDto.Injury,
+                XP = characterDto.XP,
+                Advance = characterDto.Advance,
+                KitPoints = characterDto.KitPoints,
+                Inventories = characterDto.Inventories.Select(i => new Inventory
                 {
                     ItemName = i.ItemName,
                     Quantity = i.Quantity
-                }).ToList()
+                }).ToList(),
+                Burst = characterDto.Burst,
+                SinOverflow = characterDto.SinOverflow,
+                Marks = characterDto.Marks
             };
 
+            _context.Characters.Add(character);
+            _context.SaveChanges();
             return CreatedAtAction(nameof(GetCharacters), new {userId = userId, id = character.Id}, characterDto);
         }
 

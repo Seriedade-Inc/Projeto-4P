@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
+
 namespace Projeto4pSharedLibrary.Classes
 {
     public class Character
-    {
+    {   
         public long Id { get; set; } // Chave primária
         public Guid UserId { get; set; } // Relacionamento com o User
         public string Name { get; set; } = string.Empty;
