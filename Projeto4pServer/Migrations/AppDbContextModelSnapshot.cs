@@ -31,6 +31,9 @@ namespace Projeto4pServer.Migrations.AppDb
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("Advance")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Agenda")
                         .IsRequired()
                         .HasColumnType("text");
@@ -44,6 +47,10 @@ namespace Projeto4pServer.Migrations.AppDb
 
                     b.Property<int>("CAT")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CharacterXID")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("DivineAgony")
                         .HasColumnType("integer");
@@ -87,19 +94,12 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("XID")
+                    b.Property<string>("Weigth")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("XP")
                         .HasColumnType("integer");
-
-                    b.Property<int>("advance")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("weigth")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

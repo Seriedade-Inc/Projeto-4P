@@ -32,6 +32,13 @@ namespace Projeto4pServer.Data
                 .WithMany(c => c.Inventories)
                 .HasForeignKey(i => i.CharacterId)
                 .OnDelete(DeleteBehavior.Cascade);
-        }
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Characters) // Um User pode ter muitos Characters
+                .WithOne() // Um Character não precisa de uma propriedade de navegação para o User
+                .HasForeignKey(c => c.UserId) // Chave estrangeira em Character
+                .OnDelete(DeleteBehavior.Cascade); // Deleção em cascata
+
+        }   
     }
 }

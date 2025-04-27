@@ -65,10 +65,13 @@ namespace Projeto4pServer.Services
         {
             if (string.IsNullOrEmpty(username))
             {
-                return await _context.User.ToListAsync();
+                return await _context.User
+                .Include(u => u.Characters)
+                .ToListAsync();
             }
 
             return await _context.User
+                .Include(u => u.Characters)
                 .Where(u => u.UserName.Contains(username, StringComparison.CurrentCultureIgnoreCase))
                 .OrderBy(u => u.UserName)
                 .ToListAsync();

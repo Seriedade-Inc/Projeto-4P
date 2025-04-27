@@ -13,8 +13,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250423010459_UpdateInventoryRelationship")]
-    partial class UpdateInventoryRelationship
+    [Migration("20250426231852_UpdateUserCharacterRelationship")]
+    partial class UpdateUserCharacterRelationship
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,6 +34,9 @@ namespace Projeto4pServer.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("Advance")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Agenda")
                         .IsRequired()
                         .HasColumnType("text");
@@ -47,6 +50,10 @@ namespace Projeto4pServer.Migrations
 
                     b.Property<int>("CAT")
                         .HasColumnType("integer");
+
+                    b.Property<string>("CharacterXID")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("DivineAgony")
                         .HasColumnType("integer");
@@ -90,19 +97,12 @@ namespace Projeto4pServer.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("XID")
+                    b.Property<string>("Weigth")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("XP")
                         .HasColumnType("integer");
-
-                    b.Property<int>("advance")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Weigth")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
