@@ -1,9 +1,68 @@
 @page "/New-Exorcist"
+@using Microsoft.AspNetCore.Components
 
 <PageTitle>New Exorcist</PageTitle>
 
-<main>
-  <div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
-    <h1 class="justify-center text-9xl text-white font-bold">WIP</h1>
-    </div>
-</main>
+
+<div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
+   <form class="max-w-sm mx-auto pt-12">
+
+    <div class="mb-4">
+    <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
+    <input id="xid" maxlength="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" placeholder="Enter your XID" required />
+  </div>
+
+  <div class="mb-4">
+    <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
+    <input id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your name" required />
+  </div>
+
+  <div class="mb-4">
+    <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
+    <input id="age" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your age" required />
+  </div>
+
+  <div class="mb-4">
+    <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
+    <select id="agenda" class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="What is your Agenda?" required>
+      <option>Beast</option>
+      <option>Doomed</option>
+      <option>Firebug</option>
+      <option>Guardian</option>
+      <option>Loner</option>
+      <option>Hardline</option>
+      <option>Machine</option>
+      <option>Moth</option>
+      <option>Temperance</option>
+      <option>Departed</option>
+      <option>Torch</option>
+      <option>Shadow</option>
+      <option>Sorcerer</option>
+      <option>Songbird</option>
+      <option>Demon</option>
+      <option>Survivor</option>
+    </select>
+  </div>
+
+  <div class="mb-4">
+    <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
+    <select id="blasphemy" class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="What is your Blasphemy?" required>
+     
+      <option>Tension</option>
+      <option>Ardence</option>
+      <option>Flux</option>
+      <option>Vector</option>
+      <option>Gate</option>
+      <option>Smother</option>
+      <option>Whisper</option>
+      <option>Bind</option>
+      <option>Palace</option>
+      <option>Jaunt</option>
+      <option>Sympathy</option>
+      
+
+  </select>
+  </div>
+
+</form>
+</div>
