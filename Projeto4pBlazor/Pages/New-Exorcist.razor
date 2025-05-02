@@ -3,66 +3,236 @@
 
 <PageTitle>New Exorcist</PageTitle>
 
+<div class="min-h-screen bg-black text-purple-800">
+    <form class="max-w-sm mx-auto pt-12 pb-12">
+        <div class="mb-4">
+            <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
+            <input id="xid" maxlength="4" 
+                   @bind="Xid"
+                   @oninput="OnXidInput"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" 
+                   placeholder="INSERT YOUR XID" 
+                   required />
+        </div>
 
-<div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
-   <form class="max-w-sm mx-auto pt-12">
+        <div class="mb-4">
+            <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
+            <input id="name" 
+                   @bind="Name"
+                   @oninput="UpdateTexts"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
+                   placeholder="ENTER YOUR NAME" 
+                   required />
+        </div>
 
-    <div class="mb-4">
-    <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
-    <input id="xid" maxlength="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" placeholder="Enter your XID" required />
-  </div>
+        <div class="mb-4">
+            <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
+            <input id="age" 
+                   @bind="Age" 
+                   @oninput="UpdateTexts"
+                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
+                   placeholder="ENTER YOUR AGE" 
+                   required />
+        </div>
 
-  <div class="mb-4">
-    <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
-    <input id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your name" required />
-  </div>
+        <div class="mb-4">
+            <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
+            <select id="agenda" 
+                    @bind="Agenda"
+                    @bind:event="onchange"
+                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
+                    required>
+                <option value="">Select your Agenda</option>
+                <option value="Beast">Beast</option>
+                <option value="Doomed">Doomed</option>
+                <option value="Firebug">Firebug</option>
+                <option value="Guardian">Guardian</option>
+                <option value="Loner">Loner</option>
+                <option value="Hardline">Hardline</option>
+                <option value="Machine">Machine</option>
+                <option value="Moth">Moth</option>
+                <option value="Temperance">Beast</option>
+                <option value="Departed">Torch</option>
+                <option value="Shadow">Shadow</option>
+                <option value="Sorcerer">Sorcerer</option>
+                <option value="Songbird">Songbird</option>
+                <option value="Demon">Demon</option>
+                <option value="Survivor">Survivor</option>
+            </select>
+            
+            @if (!string.IsNullOrEmpty(AgendaText))
+            {
+                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
+                    @AgendaText
+                </div>
+            }
+        </div>
 
-  <div class="mb-4">
-    <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
-    <input id="age" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="Enter your age" required />
-  </div>
+        <div class="mb-6">
+            <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
+            <select id="blasphemy"
+                    @bind="Blasphemy"
+                    @bind:event="onchange"
+                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
+                    required>
 
-  <div class="mb-4">
-    <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
-    <select id="agenda" class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="What is your Agenda?" required>
-      <option>Beast</option>
-      <option>Doomed</option>
-      <option>Firebug</option>
-      <option>Guardian</option>
-      <option>Loner</option>
-      <option>Hardline</option>
-      <option>Machine</option>
-      <option>Moth</option>
-      <option>Temperance</option>
-      <option>Departed</option>
-      <option>Torch</option>
-      <option>Shadow</option>
-      <option>Sorcerer</option>
-      <option>Songbird</option>
-      <option>Demon</option>
-      <option>Survivor</option>
-    </select>
-  </div>
+                <option value="">Select your Blasphemy</option>
 
-  <div class="mb-4">
-    <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
-    <select id="blasphemy" class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" placeholder="What is your Blasphemy?" required>
-     
-      <option>Tension</option>
-      <option>Ardence</option>
-      <option>Flux</option>
-      <option>Vector</option>
-      <option>Gate</option>
-      <option>Smother</option>
-      <option>Whisper</option>
-      <option>Bind</option>
-      <option>Palace</option>
-      <option>Jaunt</option>
-      <option>Sympathy</option>
-      
+                <option value="Tension">Tension</option>
+                <option value="Ardence">Ardence</option>
+                <option value="Flux">Flux</option>
+                <option value="Vector">Vector</option>
+                <option value="Gate">Gate</option>
+                <option value="Smother">Smother</option>
+                <option value="Whisper">Whisper</option>
+                <option value="Edit">Edit</option>
+                <option value="Bind">Bind</option>
+                <option value="Palace">Palace</option>
+                <option value="Jaunt">Jaunt</option>
+                <option value="Sympathy">Sympathy</option>
+            </select>
+            
+            @if (!string.IsNullOrEmpty(BlasphemyText))
+            {
+                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
+                    @BlasphemyText
+                </div>
+            }
+        </div>
 
-  </select>
-  </div>
-
-</form>
+        @if (ShowProfileSummary())
+        {
+            <div class="mt-6 p-4 border border-purple-600 rounded-lg bg-gray-900 text-purple-200">
+                <h3 class="font-bold text-lg mb-2">Exorcist Profile Summary:</h3>
+                <p><span class="font-semibold">XID:</span> @Xid</p>
+                <p><span class="font-semibold">Name:</span> @Name</p>
+                <p><span class="font-semibold">Age:</span> @Age</p>
+                <p><span class="font-semibold">Agenda:</span> @Agenda - @AgendaText</p>
+                <p><span class="font-semibold">Blasphemy:</span> @Blasphemy - @BlasphemyText</p>
+            </div>
+        }
+    </form>
 </div>
+
+@code {
+    private string Xid = "";
+    private string Name = "";
+    private int? Age;
+    private string _agenda = "";
+    private string _blasphemy = "";
+    private string Agenda
+    {
+        get => _agenda;
+        set
+        {
+            _agenda = value;
+            UpdateTexts(); // Atualiza o texto relacionado automaticamente
+        }
+    }
+
+    private string Blasphemy
+    {
+        get => _blasphemy;
+        set
+        {
+            _blasphemy = value;
+            UpdateTexts(); // Atualiza o texto relacionado automaticamente (aham)
+        }
+    }
+    private string AgendaText = "";
+    private string BlasphemyText = "";
+
+    private void OnXidInput(ChangeEventArgs e)
+    {
+        Xid = e.Value?.ToString()?.ToUpper() ?? string.Empty;
+        UpdateTexts();
+    }
+
+    private bool ShowProfileSummary()
+    {
+        return !string.IsNullOrEmpty(Xid) && 
+               !string.IsNullOrEmpty(Name) && 
+               Age.HasValue &&
+               !string.IsNullOrEmpty(Agenda) && 
+               !string.IsNullOrEmpty(Blasphemy);
+    }
+
+    private void UpdateTexts()
+    {
+        AgendaText = GetAgendaText(Agenda);
+        BlasphemyText = GetBlasphemyText(Blasphemy);
+        StateHasChanged();
+    }
+    private string GetAgendaText(string agenda)
+    {
+        return agenda switch
+        {
+            "Beast" => "Get into a fight. Hold Back.",
+
+            "Doomed" => "Demonstrate your humanity. Demonstrate your distance from humanity",
+
+            "Firebug" => "Solve a problem creatively. Take the Simple Solution.",
+
+            "Guardian" => "Protect your people. Leave nobody behind",
+
+            "Loner" => "Demonstrate your superior skill. Let the mask slip.",
+
+            "Hardline" => "Follow Orders. Disobey Orders.",
+
+            "Machine" => "Put the work before your own needs. Take a Break",
+
+            "Moth" => "Uncover hidden or uncomfortable truths about the world. Uncover hidden or uncomfortable truths about yourself.",
+
+            "Temperance" => "Put people before the mission. Harm someone intentionally.",
+
+            "Departed" => "The Dead do not speak; The Dead are not done",
+
+            "Torch" => "Lead from the front. Let another take the lead.",
+
+            "Shadow" => "Outshine your rival. Let your rival outshine you.",
+
+            "Sorcerer" => "Demonstrate flashy displays of power. Invite catastrophe",
+
+            "Songbird" => "Get someone to do your bidding. Do something selfless.",
+
+            "Demon" => "Enrich yourself. Give something valuable away.",
+
+            "Survivor" => "Survive.",
+
+            _ => ""
+        };
+    }
+
+    private string GetBlasphemyText(string blasphemy)
+    {
+        return blasphemy switch
+        {
+            "Tension" => "Project a spot psychic field of incredible density and durability. This often takes the form of a metallic shimmering surface, visible only to the psychically sensitive.",
+
+            "Ardence" => "Manipulate potential energy to create flashes of extreme heat or cold. The most potent, and most dangerous of blasphemies - to others and its user.",
+
+            "Flux" => "Manipulate the direction and flow of time itself.",
+
+            "Vector" => "Imbue objects or living beings with sudden and sharp burst of velocity.",
+
+            "Gate" => "Manipulate space as a sculptor works with clay.",
+
+            "Smother" => "Surpress the innate properties of the universe. Lie to God.",
+
+            "Whisper" => "Your shadow is animate and hungry. It knows the future.",
+
+            "Edit" => "The way things are is not the way they had to be. You can choose, filtering the threads of possibilities and inviting them to meld with the real world.",
+
+            "Bind" => "With the will of a wielder, even Sins can be controlled, bound to specially prepared talismans in spirit form.",
+
+            "Palace" => "The contents of your mind are as solid to you as plain reality.",
+
+            "Jaunt" => "Slice the body and soul with a carving knife.",
+
+            "Sympathy" => "Humans leave impressions on everything they touch. You can do more than touch.",
+            _ => ""
+        };
+    }
+} 
+
+Falta: Poderes de Agenda e Blasphemy / Exportação de JSON 
