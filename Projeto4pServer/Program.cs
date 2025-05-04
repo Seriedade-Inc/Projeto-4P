@@ -3,6 +3,7 @@ using Projeto4pServer.Data;
 using Scalar.AspNetCore;
 using Projeto4pServer.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Projeto4pSharedLibrary.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<UserService>();
 builder.Services.AddHttpContextAccessor();
+BuilderService buildingService = new();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     {
@@ -33,6 +35,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<EmailService>();
+buildingService.CheckAuth();
 
 builder.Services.AddCors(options =>
 {
@@ -43,6 +46,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+
 
 var app = builder.Build();
 
@@ -55,6 +60,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 app.UseCors("BlazorPolicy");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();   
 

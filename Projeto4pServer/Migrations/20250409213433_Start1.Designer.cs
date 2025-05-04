@@ -3,18 +3,21 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Projeto4pServer.Data;
 
 #nullable disable
 
-namespace Projeto4pServer.Migrations.AppDb
+namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250409213433_Start1")]
+    partial class Start1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,61 +25,6 @@ namespace Projeto4pServer.Migrations.AppDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AgendaName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("BoldItem")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NormalItem")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SpecialRule")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Agendas");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AbilityName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("AgendaId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgendaId");
-
-                    b.ToTable("AgendaAbilities");
-                });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
                 {
@@ -132,9 +80,9 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.Property<int>("KitPoints")
                         .HasColumnType("integer");
 
-                    b.PrimitiveCollection<List<int>>("Marks")
+                    b.PrimitiveCollection<List<string>>("Marks")
                         .IsRequired()
-                        .HasColumnType("integer[]");
+                        .HasColumnType("text[]");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -158,34 +106,61 @@ namespace Projeto4pServer.Migrations.AppDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Characters");
                 });
 
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Inventory", b =>
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character+Inventory", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<long>("CharacterID")
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CharacterId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ItemName")
+                    b.PrimitiveCollection<List<string>>("Items")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text[]");
 
-                    b.Property<int>("Quantity")
+                    b.HasKey("CharacterID");
+
+                    b.ToTable("Inventory");
+                });
+
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character+Skills", b =>
+                {
+                    b.Property<long>("CharacterID")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Authority")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<int>("Conditioning")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("CharacterId");
+                    b.Property<int>("Connection")
+                        .HasColumnType("integer");
 
-                    b.ToTable("Inventories");
+                    b.Property<int>("Coordination")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Covert")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Force")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Interfacing")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Investigation")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Negotiation")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Surveillance")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CharacterID");
+
+                    b.ToTable("Skills");
                 });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.User", b =>
@@ -211,50 +186,31 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character+Inventory", b =>
                 {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Agenda", "Agenda")
-                        .WithMany("Abilities")
-                        .HasForeignKey("AgendaId")
+                    b.HasOne("Projeto4pSharedLibrary.Classes.Character", null)
+                        .WithOne("CharacterInventory")
+                        .HasForeignKey("Projeto4pSharedLibrary.Classes.Character+Inventory", "CharacterID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Agenda");
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character+Skills", b =>
+                {
+                    b.HasOne("Projeto4pSharedLibrary.Classes.Character", null)
+                        .WithOne("CharacterSkills")
+                        .HasForeignKey("Projeto4pSharedLibrary.Classes.Character+Skills", "CharacterID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
                 {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.User", null)
-                        .WithMany("Characters")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Inventory", b =>
-                {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Character", "Character")
-                        .WithMany("Inventories")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.Navigation("CharacterInventory")
                         .IsRequired();
 
-                    b.Navigation("Character");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
-                {
-                    b.Navigation("Abilities");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
-                {
-                    b.Navigation("Inventories");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.User", b =>
-                {
-                    b.Navigation("Characters");
+                    b.Navigation("CharacterSkills")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

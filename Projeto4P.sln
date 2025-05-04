@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projeto4pSharedLibrary", "Projeto4pSharedLibrary\Projeto4pSharedLibrary.csproj", "{39519CA7-A18B-4978-8FC3-F1193441402C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projeto4pBlazor", "Projeto4pBlazor\Projeto4pBlazor.csproj", "{BDA2D3DB-70B6-4348-B498-FDF44E00C5DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{39519CA7-A18B-4978-8FC3-F1193441402C} = {39519CA7-A18B-4978-8FC3-F1193441402C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Projeto4pServer", "Projeto4pServer\Projeto4pServer.csproj", "{4483E4CB-011A-4D12-9E3C-8EDC0224F9D6}"
 EndProject
