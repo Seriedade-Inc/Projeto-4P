@@ -9,8 +9,11 @@ namespace Projeto4pSharedLibrary.Classes
         public long AgendaAbilityId { get; set; } // Relacionamento com AgendaAbilities
         public long AgendaId { get; set; } // Relacionamento com Agenda
 
+        [JsonIgnore]
         public Agenda? Agenda { get; set; }
+        [JsonIgnore]
         public Character? Character { get; set; } // Relacionamento com Character
+        [JsonIgnore]
         public AgendaAbilities? AgendaAbility { get; set; } // Relacionamento com AgendaAbilities
     }
 }

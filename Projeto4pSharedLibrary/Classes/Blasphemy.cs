@@ -9,7 +9,7 @@ namespace Projeto4pSharedLibrary.Classes
         public string Fact { get; set; } = string.Empty;
         public string Passive { get; set; } = string.Empty;
 
-        [JsonIgnore]
+        // [JsonIgnore]
         public List<BlasphemyAbilities> BlasphemyAbilities { get; set; } = new List<BlasphemyAbilities>();
     }
 }
