@@ -8,7 +8,8 @@ namespace Projeto4pSharedLibrary.Classes
         public long CharacterId { get; set; } // Relacionamento com Character
         public long BlasphemyAbilityId { get; set; } // Relacionamento com BlasphemyAbilities
         public long BlasphemyId { get; set; } // Relacionamento com Blasphemy
-        
+
+        [JsonIgnore]
         public Blasphemy? Blasphemy { get; set; } // Relacionamento com BlasphemyAbilities
         [JsonIgnore]
         public Character? Character { get; set; } // Relacionamento com Character
