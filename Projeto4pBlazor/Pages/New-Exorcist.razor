@@ -43,21 +43,7 @@
                     class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
                     required>
                 <option value="">Select your Agenda</option>
-                <option value="Beast">Beast</option>
-                <option value="Doomed">Doomed</option>
-                <option value="Firebug">Firebug</option>
-                <option value="Guardian">Guardian</option>
-                <option value="Loner">Loner</option>
-                <option value="Hardline">Hardline</option>
-                <option value="Machine">Machine</option>
-                <option value="Moth">Moth</option>
-                <option value="Temperance">Beast</option>
-                <option value="Departed">Torch</option>
-                <option value="Shadow">Shadow</option>
-                <option value="Sorcerer">Sorcerer</option>
-                <option value="Songbird">Songbird</option>
-                <option value="Demon">Demon</option>
-                <option value="Survivor">Survivor</option>
+
             </select>
             
             @if (!string.IsNullOrEmpty(AgendaText))
@@ -78,18 +64,6 @@
 
                 <option value="">Select your Blasphemy</option>
 
-                <option value="Tension">Tension</option>
-                <option value="Ardence">Ardence</option>
-                <option value="Flux">Flux</option>
-                <option value="Vector">Vector</option>
-                <option value="Gate">Gate</option>
-                <option value="Smother">Smother</option>
-                <option value="Whisper">Whisper</option>
-                <option value="Edit">Edit</option>
-                <option value="Bind">Bind</option>
-                <option value="Palace">Palace</option>
-                <option value="Jaunt">Jaunt</option>
-                <option value="Sympathy">Sympathy</option>
             </select>
             
             @if (!string.IsNullOrEmpty(BlasphemyText))
@@ -167,37 +141,7 @@
     {
         return agenda switch
         {
-            "Beast" => "Get into a fight. Hold Back.",
 
-            "Doomed" => "Demonstrate your humanity. Demonstrate your distance from humanity",
-
-            "Firebug" => "Solve a problem creatively. Take the Simple Solution.",
-
-            "Guardian" => "Protect your people. Leave nobody behind",
-
-            "Loner" => "Demonstrate your superior skill. Let the mask slip.",
-
-            "Hardline" => "Follow Orders. Disobey Orders.",
-
-            "Machine" => "Put the work before your own needs. Take a Break",
-
-            "Moth" => "Uncover hidden or uncomfortable truths about the world. Uncover hidden or uncomfortable truths about yourself.",
-
-            "Temperance" => "Put people before the mission. Harm someone intentionally.",
-
-            "Departed" => "The Dead do not speak; The Dead are not done",
-
-            "Torch" => "Lead from the front. Let another take the lead.",
-
-            "Shadow" => "Outshine your rival. Let your rival outshine you.",
-
-            "Sorcerer" => "Demonstrate flashy displays of power. Invite catastrophe",
-
-            "Songbird" => "Get someone to do your bidding. Do something selfless.",
-
-            "Demon" => "Enrich yourself. Give something valuable away.",
-
-            "Survivor" => "Survive.",
 
             _ => ""
         };
@@ -207,29 +151,7 @@
     {
         return blasphemy switch
         {
-            "Tension" => "Project a spot psychic field of incredible density and durability. This often takes the form of a metallic shimmering surface, visible only to the psychically sensitive.",
-
-            "Ardence" => "Manipulate potential energy to create flashes of extreme heat or cold. The most potent, and most dangerous of blasphemies - to others and its user.",
-
-            "Flux" => "Manipulate the direction and flow of time itself.",
-
-            "Vector" => "Imbue objects or living beings with sudden and sharp burst of velocity.",
-
-            "Gate" => "Manipulate space as a sculptor works with clay.",
-
-            "Smother" => "Surpress the innate properties of the universe. Lie to God.",
-
-            "Whisper" => "Your shadow is animate and hungry. It knows the future.",
-
-            "Edit" => "The way things are is not the way they had to be. You can choose, filtering the threads of possibilities and inviting them to meld with the real world.",
-
-            "Bind" => "With the will of a wielder, even Sins can be controlled, bound to specially prepared talismans in spirit form.",
-
-            "Palace" => "The contents of your mind are as solid to you as plain reality.",
-
-            "Jaunt" => "Slice the body and soul with a carving knife.",
-
-            "Sympathy" => "Humans leave impressions on everything they touch. You can do more than touch.",
+ 
             _ => ""
         };
     }
