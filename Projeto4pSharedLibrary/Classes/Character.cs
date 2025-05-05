@@ -25,6 +25,7 @@ namespace Projeto4pSharedLibrary.Classes
         public List<Inventory>? Inventories { get; set; } = new List<Inventory>();
         public List<CharBlasphemy>? CharBlasphemies { get; set; } = new List<CharBlasphemy>();
         public List<CharAgenda>? CharAgendas { get; set; } = new List<CharAgenda>();
+        public CharacterSkills? CharacterSkills { get; set; }
         public int Burst { get; set; }
         public int SinOverflow { get; set;}
         public List<int> Marks { get; set; } = new List<int>();

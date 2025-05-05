@@ -275,6 +275,55 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.ToTable("Characters");
                 });
 
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharacterSkills", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Authority")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("CharacterId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Conditioning")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Connection")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Coordination")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Covert")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Force")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Interfacing")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Investigation")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Negotiation")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Surveillance")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId")
+                        .IsUnique();
+
+                    b.ToTable("CharacterSkills");
+                });
+
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Inventory", b =>
                 {
                     b.Property<long>("Id")
@@ -418,6 +467,17 @@ namespace Projeto4pServer.Migrations.AppDb
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharacterSkills", b =>
+                {
+                    b.HasOne("Projeto4pSharedLibrary.Classes.Character", "Character")
+                        .WithOne("CharacterSkills")
+                        .HasForeignKey("Projeto4pSharedLibrary.Classes.CharacterSkills", "CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+                });
+
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Inventory", b =>
                 {
                     b.HasOne("Projeto4pSharedLibrary.Classes.Character", "Character")
@@ -444,6 +504,8 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.Navigation("CharAgendas");
 
                     b.Navigation("CharBlasphemies");
+
+                    b.Navigation("CharacterSkills");
 
                     b.Navigation("Inventories");
                 });

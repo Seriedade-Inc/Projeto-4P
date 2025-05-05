@@ -27,6 +27,7 @@ namespace Projeto4pServer.Data
         public DbSet<BlasphemyAbilities> BlasphemyAbilities { get; set; }   
         public DbSet<CharAgenda> CharAgendas { get; set; }
         public DbSet<CharBlasphemy> CharBlasphemies { get; set; }
+        public DbSet<CharacterSkills> CharacterSkills { get; set; } // Relacionamento 1:1 com CharacterSkills
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -113,6 +114,15 @@ namespace Projeto4pServer.Data
                 .WithMany()
                 .HasForeignKey(cb => cb.BlasphemyId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<CharacterSkills>()
+                .HasKey(cs => cs.Id); // Define a chave primária
+
+            modelBuilder.Entity<CharacterSkills>()
+                .HasOne(cs => cs.Character)
+                .WithOne(c => c.CharacterSkills) // Relacionamento 1:1 com Character
+                .HasForeignKey<CharacterSkills>(cs => cs.CharacterId)
+                .OnDelete(DeleteBehavior.Cascade); // Deleção em cascata
 
         }   
     }

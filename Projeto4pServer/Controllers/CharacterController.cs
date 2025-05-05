@@ -25,6 +25,15 @@ namespace Projeto4pServer.Controllers
                 // Retorna o personagem específico pelo ID
                 var character = _context.Characters
                 .Include(c => c.Inventories)
+                .Include(c => c.CharAgendas)
+                    .ThenInclude(ca => ca.Agenda)
+                .Include(c => c.CharAgendas)
+                    .ThenInclude(ca => ca.AgendaAbility)
+                .Include(c => c.CharBlasphemies)
+                    .ThenInclude(cb => cb.Blasphemy)
+                .Include(c => c.CharBlasphemies)
+                    .ThenInclude(cb => cb.BlasphemyAbility)
+                .Include(c => c.CharacterSkills)
                 .FirstOrDefault(c => c.Id == id.Value);
                 
                 if (character == null)

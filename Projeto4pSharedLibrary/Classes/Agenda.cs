@@ -10,7 +10,7 @@ namespace Projeto4pSharedLibrary.Classes
     public string BoldItem { get; set; } = string.Empty;
     public string SpecialRule { get; set; } = string.Empty;
 
-    [JsonIgnore]
+    
     public List<AgendaAbilities> Abilities { get; set; } = new List<AgendaAbilities>();
   }
 
