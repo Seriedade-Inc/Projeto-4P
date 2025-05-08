@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
-using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Services;
 
 namespace Projeto4pServer.Controllers
 {
@@ -10,39 +8,18 @@ namespace Projeto4pServer.Controllers
     [ApiController]
     public class CharBlasphemyController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly CharBlasphemyService _service;
 
-        public CharBlasphemyController(AppDbContext context)
+        public CharBlasphemyController(CharBlasphemyService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/CharBlasphemy
         [HttpGet]
         public async Task<IActionResult> GetCharBlasphemies()
         {
-            var charBlasphemies = await _context.CharBlasphemies
-                .Include(cb => cb.Character)
-                .Include(cb => cb.Blasphemy)
-                .Include(cb => cb.BlasphemyAbility)
-                .ToListAsync();
-
-            // Mapeia para DTO
-            // var charBlasphemyDtos = charBlasphemies.Select(cb => new CharBlasphemyDto
-            // {
-            //     Blasphemy = cb.Blasphemy != null ? new BlasphemyDto
-            //     {
-            //         BlasphemyName = cb.Blasphemy.BlasphemyName,
-            //         Fact = cb.Blasphemy.Fact,
-            //         Passive = cb.Blasphemy.Passive
-            //     } : null,
-            //     BlasphemyAbility = cb.BlasphemyAbility != null ? new BlasphemyAbilitiesDto
-            //     {
-            //         AbilityName = cb.BlasphemyAbility.AbilityName,
-            //         Description = cb.BlasphemyAbility.Description
-            //     } : null
-            // }).ToList();
-
+            var charBlasphemies = await _service.GetAllCharBlasphemiesAsync();
             return Ok(charBlasphemies);
         }
 
@@ -50,30 +27,9 @@ namespace Projeto4pServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCharBlasphemy(long id)
         {
-            var charBlasphemy = await _context.CharBlasphemies
-                .Include(cb => cb.Character)
-                .Include(cb => cb.Blasphemy)
-                .Include(cb => cb.BlasphemyAbility)
-                .FirstOrDefaultAsync(cb => cb.Id == id);
-
+            var charBlasphemy = await _service.GetCharBlasphemyByIdAsync(id);
             if (charBlasphemy == null)
                 return NotFound("CharBlasphemy not found.");
-
-            // Mapeia para DTO
-            // var charBlasphemyDto = new CharBlasphemyDto
-            // {
-            //     Blasphemy = charBlasphemy.Blasphemy != null ? new BlasphemyDto
-            //     {
-            //         BlasphemyName = charBlasphemy.Blasphemy.BlasphemyName,
-            //         Fact = charBlasphemy.Blasphemy.Fact,
-            //         Passive = charBlasphemy.Blasphemy.Passive
-            //     } : null,
-            //     BlasphemyAbility = charBlasphemy.BlasphemyAbility != null ? new BlasphemyAbilitiesDto
-            //     {
-            //         AbilityName = charBlasphemy.BlasphemyAbility.AbilityName,
-            //         Description = charBlasphemy.BlasphemyAbility.Description
-            //     } : null
-            // };
 
             return Ok(charBlasphemy);
         }
@@ -82,49 +38,34 @@ namespace Projeto4pServer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCharBlasphemy([FromBody] CharBlasphemyDto charBlasphemyDto)
         {
-            // Valida se o personagem existe
-            var character = await _context.Characters.FindAsync(charBlasphemyDto.CharacterId);
-            if (character == null)
-                return NotFound("Character not found.");
-
-            if (charBlasphemyDto.BlasphemyId == null || 
-                !await _context.Blasphemies.AnyAsync(b => b.Id == charBlasphemyDto.BlasphemyId))
+            try
             {
-                return BadRequest("Invalid BlasphemyId. The blasphemy does not exist.");
+                var charBlasphemy = await _service.CreateCharBlasphemyAsync(charBlasphemyDto);
+                return CreatedAtAction(nameof(GetCharBlasphemy), new { id = charBlasphemy.Id }, charBlasphemy);
             }
-
-            // Verifica se o BlasphemyAbilityId é válido
-            if (charBlasphemyDto.BlasphemyAbilityId == null || 
-                !await _context.BlasphemyAbilities.AnyAsync(ba => ba.Id == charBlasphemyDto.BlasphemyAbilityId))
+            catch (KeyNotFoundException ex)
             {
-                return BadRequest("Invalid BlasphemyAbilityId. The blasphemy ability does not exist.");
+                return NotFound(ex.Message);
             }
-                
-            var charBlasphemy = new CharBlasphemy
+            catch (ArgumentException ex)
             {
-                BlasphemyId = charBlasphemyDto.BlasphemyId, // Conversão explícita
-                BlasphemyAbilityId = charBlasphemyDto.BlasphemyAbilityId, // Conversão explícita
-                CharacterId = charBlasphemyDto.CharacterId, // Conversão explícita
-            };
-
-            _context.CharBlasphemies.Add(charBlasphemy);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetCharBlasphemy), new { id = charBlasphemy.Id }, charBlasphemyDto);
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/CharBlasphemy/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharBlasphemy(long id)
         {
-            var charBlasphemy = await _context.CharBlasphemies.FindAsync(id);
-            if (charBlasphemy == null)
-                return NotFound("CharBlasphemy not found.");
-
-            _context.CharBlasphemies.Remove(charBlasphemy);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.DeleteAsync(id); // Reutiliza o método genérico de delete do DeleteService
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

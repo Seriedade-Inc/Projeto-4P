@@ -4,6 +4,7 @@ public class CreateCharacterDto
 {
     public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
     public string Heigth { get; set; } = string.Empty;
     public string Weigth { get; set; } = string.Empty;
@@ -25,6 +26,7 @@ public class CreateCharacterDto
 public class UpdateCharacterDto
 {
     public string Name { get; set; } = string.Empty;
+    public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
     public string Heigth { get; set; } = string.Empty;
     public string Weigth { get; set; } = string.Empty;
@@ -48,6 +50,7 @@ public class CharacterDto
     public long Id { get; set; }
     public Guid UserId { get; set; }
     public string Name { get; set; } = string.Empty;
+    public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
     public string Heigth { get; set; } = string.Empty;
     public string Weigth { get; set; } = string.Empty;

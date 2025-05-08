@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
-using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Services;
 
 namespace Projeto4pServer.Controllers
 {
@@ -10,31 +8,18 @@ namespace Projeto4pServer.Controllers
     [ApiController]
     public class AgendaController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly AgendaService _service;
 
-        public AgendaController(AppDbContext context)
+        public AgendaController(AgendaService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Agenda
         [HttpGet]
         public async Task<IActionResult> GetAgendas()
         {
-            var agendas = await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
-                .ToListAsync();
-
-            // Mapeia para DTO
-            // var agendaDtos = agendas.Select(a => new AgendaDto
-            // {
-            //     Id = a.Id,
-            //     AgendaName = a.AgendaName,
-            //     NormalItem = a.NormalItem,
-            //     BoldItem = a.BoldItem,
-            //     SpecialRule = a.SpecialRule
-            // }).ToList();
-
+            var agendas = await _service.GetAllAgendasAsync();
             return Ok(agendas);
         }
 
@@ -42,21 +27,9 @@ namespace Projeto4pServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAgenda(long id)
         {
-            var agenda = await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
+            var agenda = await _service.GetAgendaByIdAsync(id);
             if (agenda == null)
                 return NotFound("Agenda not found.");
-
-            // // Mapeia para DTO
-            // var agendaDto = new AgendaDto
-            // {
-            //     AgendaName = agenda.AgendaName,
-            //     NormalItem = agenda.NormalItem,
-            //     BoldItem = agenda.BoldItem,
-            //     SpecialRule = agenda.SpecialRule
-            // };
 
             return Ok(agenda);
         }
@@ -65,73 +38,49 @@ namespace Projeto4pServer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAgenda([FromBody] AgendaDto agendaDto)
         {
-            if (string.IsNullOrWhiteSpace(agendaDto.AgendaName) ||
-                string.IsNullOrWhiteSpace(agendaDto.NormalItem) ||
-                string.IsNullOrWhiteSpace(agendaDto.BoldItem))
-        {
-            return BadRequest("All fields except 'SpecialRule' must be filled.");
-        }
-
-            // Mapeia o DTO para a entidade
-            var agenda = new Agenda
+            try
             {
-                AgendaName = agendaDto.AgendaName,
-                NormalItem = agendaDto.NormalItem,
-                BoldItem = agendaDto.BoldItem,
-                SpecialRule = agendaDto.SpecialRule
-            };
-
-            _context.Set<Agenda>().Add(agenda);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetAgenda), new { id = agenda.Id }, new
+                var agenda = await _service.CreateAgendaAsync(agendaDto);
+                return CreatedAtAction(nameof(GetAgenda), new { id = agenda.Id }, agenda);
+            }
+            catch (ArgumentException ex)
             {
-                agendaDto.AgendaName,
-                agendaDto.NormalItem,
-                agendaDto.BoldItem,
-                agendaDto.SpecialRule
-            });
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Agenda/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAgenda(long id, [FromBody] AgendaDto agendaDto)
         {
-            var existingAgenda = await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (existingAgenda == null)
-                return NotFound("Agenda not found.");
-
-            // Atualiza os valores da entidade com base no DTO
-            existingAgenda.AgendaName = agendaDto.AgendaName;
-            existingAgenda.NormalItem = agendaDto.NormalItem;
-            existingAgenda.BoldItem = agendaDto.BoldItem;
-            existingAgenda.SpecialRule = agendaDto.SpecialRule;
-
-            _context.Entry(existingAgenda).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.UpdateAgendaAsync(id, agendaDto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Agenda/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAgenda(long id)
         {
-            var agenda = await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
-                .FirstOrDefaultAsync(a => a.Id == id);
-
-            if (agenda == null)
-                return NotFound("Agenda not found.");
-
-            _context.Set<AgendaAbilities>().RemoveRange(agenda.Abilities);
-            _context.Set<Agenda>().Remove(agenda);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.DeleteAsync(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

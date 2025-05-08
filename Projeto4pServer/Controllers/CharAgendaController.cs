@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
-using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Services;
 
 namespace Projeto4pServer.Controllers
 {
@@ -10,72 +8,28 @@ namespace Projeto4pServer.Controllers
     [ApiController]
     public class CharAgendaController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly CharAgendaService _service;
 
-        public CharAgendaController(AppDbContext context)
+        public CharAgendaController(CharAgendaService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/CharAgenda
         [HttpGet]
         public async Task<IActionResult> GetCharAgendas()
         {
-            var CharAgendas = await _context.CharAgendas
-                .Include(ca => ca.Character)
-                .Include(ca => ca.Agenda)
-                .Include(ca => ca.AgendaAbility)
-                .ToListAsync();
-
-            // // Mapeia para DTO
-            // var charAgendaDtos = charAgendas.Select(ca => new CharAgendaDto
-            // {
-            //     Agenda = ca.Agenda != null ? new AgendaDto
-            //     {
-            //         AgendaName = ca.Agenda.AgendaName,
-            //         NormalItem = ca.Agenda.NormalItem,
-            //         BoldItem = ca.Agenda.BoldItem,
-            //         SpecialRule = ca.Agenda.SpecialRule
-            //     } : null,
-            //     AgendaAbility = ca.AgendaAbility != null ? new AgendaAbilitiesDto
-            //     {
-            //         AbilityName = ca.AgendaAbility.AbilityName,
-            //         Description = ca.AgendaAbility.Description
-            //     } : null
-            // }).ToList();
-
-            return Ok(CharAgendas);
+            var charAgendas = await _service.GetAllCharAgendasAsync();
+            return Ok(charAgendas);
         }
 
         // GET: api/CharAgenda/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCharAgenda(long id)
         {
-            var charAgenda = await _context.CharAgendas
-                .Include(ca => ca.Character)
-                .Include(ca => ca.AgendaAbility)
-                .Include(ca => ca.Agenda)
-                .FirstOrDefaultAsync(ca => ca.Id == id);
-
+            var charAgenda = await _service.GetCharAgendaByIdAsync(id);
             if (charAgenda == null)
                 return NotFound("CharAgenda not found.");
-
-            // Mapeia para DTO
-            // var charAgendaDto = new CharAgendaDto
-            // {
-            //     Agenda = charAgenda.Agenda != null ? new AgendaDto
-            //     {
-            //         AgendaName = charAgenda.Agenda.AgendaName,
-            //         NormalItem = charAgenda.Agenda.NormalItem,
-            //         BoldItem = charAgenda.Agenda.BoldItem,
-            //         SpecialRule = charAgenda.Agenda.SpecialRule
-            //     } : null,
-            //     AgendaAbility = charAgenda.AgendaAbility != null ? new AgendaAbilitiesDto
-            //     {
-            //         AbilityName = charAgenda.AgendaAbility.AbilityName,
-            //         Description = charAgenda.AgendaAbility.Description
-            //     } : null
-            // };
 
             return Ok(charAgenda);
         }
@@ -84,49 +38,34 @@ namespace Projeto4pServer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCharAgenda([FromBody] CharAgendaDto charAgendaDto)
         {
-            // Valida se o personagem existe
-            var character = await _context.Characters.FindAsync(charAgendaDto.CharacterId);
-            if (character == null)
-                return NotFound("Character not found.");
-
-            if (charAgendaDto.AgendaId == null || 
-                !await _context.Agendas.AnyAsync(a => a.Id == charAgendaDto.AgendaId))
+            try
             {
-                return BadRequest("Invalid AgendaId. The agenda does not exist.");
+                var charAgenda = await _service.CreateCharAgendaAsync(charAgendaDto);
+                return CreatedAtAction(nameof(GetCharAgenda), new { id = charAgenda.Id }, charAgenda);
             }
-
-            // Verifica se o AgendaAbilityId é válido
-            if (charAgendaDto.AgendaAbilityId == null || 
-                !await _context.AgendaAbilities.AnyAsync(aa => aa.Id == charAgendaDto.AgendaAbilityId))
-            {   
-                return BadRequest("Invalid AgendaAbilityId. The agenda ability does not exist.");
-            }
-
-            var charAgenda = new CharAgenda
+            catch (KeyNotFoundException ex)
             {
-                AgendaId = charAgendaDto.AgendaId, // Conversão explícita
-                AgendaAbilityId = charAgendaDto.AgendaAbilityId, // Conversão explícita
-                CharacterId = charAgendaDto.CharacterId
-            };
-
-            _context.CharAgendas.Add(charAgenda);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetCharAgenda), new { id = charAgenda.Id }, charAgendaDto);
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/CharAgenda/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharAgenda(long id)
         {
-            var charAgenda = await _context.CharAgendas.FindAsync(id);
-            if (charAgenda == null)
-                return NotFound("CharAgenda not found.");
-
-            _context.CharAgendas.Remove(charAgenda);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.DeleteAsync(id); // Reutiliza o método genérico de delete do DeleteService
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

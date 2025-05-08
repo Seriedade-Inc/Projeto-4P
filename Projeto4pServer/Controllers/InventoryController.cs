@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
-using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Services;
 
 namespace Projeto4pServer.Controllers
 {
@@ -10,28 +8,18 @@ namespace Projeto4pServer.Controllers
     [ApiController]
     public class InventoryController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly InventoryService _service;
 
-        public InventoryController(AppDbContext context)
+        public InventoryController(InventoryService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Inventory
         [HttpGet]
         public async Task<IActionResult> GetInventories()
         {
-            var inventories = await _context.Set<Inventory>()
-                .Include(i => i.Character)
-                .ToListAsync();
-
-            // Mapeia para DTO
-            // var inventoryDtos = inventories.Select(i => new InventoryDto
-            // {
-            //     ItemName = i.ItemName,
-            //     Quantity = i.Quantity
-            // }).ToList();
-
+            var inventories = await _service.GetAllInventoriesAsync();
             return Ok(inventories);
         }
 
@@ -39,19 +27,9 @@ namespace Projeto4pServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInventory(long id)
         {
-            var inventory = await _context.Set<Inventory>()
-                .Include(i => i.Character)
-                .FirstOrDefaultAsync(i => i.Id == id);
-
+            var inventory = await _service.GetInventoryByIdAsync(id);
             if (inventory == null)
                 return NotFound("Inventory item not found.");
-
-            // Mapeia para DTO
-            // var inventoryDto = new InventoryDto
-            // {
-            //     ItemName = inventory.ItemName,
-            //     Quantity = inventory.Quantity
-            // };
 
             return Ok(inventory);
         }
@@ -60,65 +38,49 @@ namespace Projeto4pServer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateInventory([FromBody] InventoryDto inventoryDto)
         {
-            // Valida se o personagem existe
-            var character = await _context.Set<Character>().FindAsync(inventoryDto.CharacterId);
-            if (character == null)
-                return NotFound("Character not found.");
-
-            if (string.IsNullOrWhiteSpace(inventoryDto.ItemName) || inventoryDto.Quantity <= 0)
-                return BadRequest("Invalid item name or quantity.");
-
-             if (inventoryDto.CharacterId == null || 
-                !await _context.Agendas.AnyAsync(a => a.Id == inventoryDto.CharacterId))
+            try
             {
-                return BadRequest("Invalid CharacterId. The chracter does not exist.");
+                var inventory = await _service.CreateInventoryAsync(inventoryDto);
+                return CreatedAtAction(nameof(GetInventory), new { id = inventory.Id }, inventory);
             }
-
-            // Mapeia o DTO para a entidade
-            var inventory = new Inventory
+            catch (KeyNotFoundException ex)
             {
-                CharacterId = inventoryDto.CharacterId,
-                ItemName = inventoryDto.ItemName,
-                Quantity = inventoryDto.Quantity
-            };
-
-            _context.Set<Inventory>().Add(inventory);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetInventory), new { id = inventory.Id }, inventoryDto);
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/Inventory/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateInventory(long id, [FromBody] InventoryDto inventoryDto)
         {
-            var existingInventory = await _context.Set<Inventory>().FindAsync(id);
-            if (existingInventory == null)
-                return NotFound("Inventory item not found.");
-
-            // Atualiza os valores da entidade com base no DTO
-            existingInventory.CharacterId = inventoryDto.CharacterId;
-            existingInventory.ItemName = inventoryDto.ItemName;
-            existingInventory.Quantity = inventoryDto.Quantity;
-
-            _context.Entry(existingInventory).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.UpdateInventoryAsync(id, inventoryDto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         // DELETE: api/Inventory/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInventory(long id)
         {
-            var inventory = await _context.Set<Inventory>().FindAsync(id);
-            if (inventory == null)
-                return NotFound("Inventory item not found.");
-
-            _context.Set<Inventory>().Remove(inventory);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.DeleteAsync(id); // Reutiliza o método genérico de delete do DeleteService
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

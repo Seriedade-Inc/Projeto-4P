@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
-using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Services;
 
 namespace Projeto4pServer.Controllers
 {
@@ -10,29 +8,18 @@ namespace Projeto4pServer.Controllers
     [ApiController]
     public class BlasphemyController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly BlasphemyService _service;
 
-        public BlasphemyController(AppDbContext context)
+        public BlasphemyController(BlasphemyService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Blasphemy
         [HttpGet]
         public async Task<IActionResult> GetBlasphemies()
         {
-            var blasphemies = await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
-                .ToListAsync();
-
-            // // Mapeia para DTO
-            // var blasphemyDtos = blasphemies.Select(b => new BlasphemyDto
-            // {
-            //     BlasphemyName = b.BlasphemyName,
-            //     Fact = b.Fact,
-            //     Passive = b.Passive,
-            // }).ToList();
-
+            var blasphemies = await _service.GetAllBlasphemiesAsync();
             return Ok(blasphemies);
         }
 
@@ -40,25 +27,9 @@ namespace Projeto4pServer.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBlasphemy(long id)
         {
-            var blasphemy = await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
+            var blasphemy = await _service.GetBlasphemyByIdAsync(id);
             if (blasphemy == null)
                 return NotFound("Blasphemy not found.");
-
-            // Mapeia para DTO
-            // var blasphemyDto = new BlasphemyDto
-            // {
-            //     BlasphemyName = blasphemy.BlasphemyName,
-            //     Fact = blasphemy.Fact,
-            //     Passive = blasphemy.Passive,
-            //     BlasphemyAbilities = blasphemy.BlasphemyAbilities?.Select(ba => new BlasphemyAbilitiesDto
-            //     {
-            //         AbilityName = ba.AbilityName,
-            //         Description = ba.Description
-            //     }).ToList()
-            // };
 
             return Ok(blasphemy);
         }
@@ -67,59 +38,38 @@ namespace Projeto4pServer.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBlasphemy([FromBody] BlasphemyDto blasphemyDto)
         {
-            // Mapeia o DTO para a entidade
-            var blasphemy = new Blasphemy
-            {
-                BlasphemyName = blasphemyDto.BlasphemyName,
-                Fact = blasphemyDto.Fact,
-                Passive = blasphemyDto.Passive,
-            };
-
-            _context.Set<Blasphemy>().Add(blasphemy);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetBlasphemy), new { id = blasphemy.Id }, blasphemyDto);
+            var blasphemy = await _service.CreateBlasphemyAsync(blasphemyDto);
+            return CreatedAtAction(nameof(GetBlasphemy), new { id = blasphemy.Id }, blasphemy);
         }
 
         // PUT: api/Blasphemy/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBlasphemy(long id, [FromBody] BlasphemyDto blasphemyDto)
         {
-            var existingBlasphemy = await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (existingBlasphemy == null)
-                return NotFound("Blasphemy not found.");
-
-            // Atualiza os valores da entidade com base no DTO
-            existingBlasphemy.BlasphemyName = blasphemyDto.BlasphemyName;
-            existingBlasphemy.Fact = blasphemyDto.Fact;
-            existingBlasphemy.Passive = blasphemyDto.Passive;
-
-
-            _context.Entry(existingBlasphemy).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.UpdateBlasphemyAsync(id, blasphemyDto);
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
         // DELETE: api/Blasphemy/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBlasphemy(long id)
         {
-            var blasphemy = await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
-                .FirstOrDefaultAsync(b => b.Id == id);
-
-            if (blasphemy == null)
-                return NotFound("Blasphemy not found.");
-
-            _context.Set<BlasphemyAbilities>().RemoveRange(blasphemy.BlasphemyAbilities);
-            _context.Set<Blasphemy>().Remove(blasphemy);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                await _service.DeleteAsync(id); // Reutiliza o método genérico de delete do DeleteService
+                return NoContent();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }
