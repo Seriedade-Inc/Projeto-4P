@@ -335,6 +335,9 @@ namespace Projeto4pServer.Migrations.AppDb
                     b.Property<long>("CharacterId")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("ItemDescription")
+                        .HasColumnType("text");
+
                     b.Property<string>("ItemName")
                         .IsRequired()
                         .HasColumnType("text");
