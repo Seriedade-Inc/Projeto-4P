@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
+using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
 
 namespace Projeto4pServer.Controllers
@@ -23,6 +24,14 @@ namespace Projeto4pServer.Controllers
             var abilities = await _context.Set<BlasphemyAbilities>()
                 .Include(a => a.Blasphemy)
                 .ToListAsync();
+
+            // Mapeia para DTO
+            // var abilitiesDto = abilities.Select(a => new BlasphemyAbilitiesDto
+            // {
+            //     AbilityName = a.AbilityName,
+            //     Description = a.Description
+            // }).ToList();
+
             return Ok(abilities);
         }
 
@@ -37,31 +46,45 @@ namespace Projeto4pServer.Controllers
             if (ability == null)
                 return NotFound("Ability not found.");
 
+            // Mapeia para DTO
+            // var abilityDto = new BlasphemyAbilitiesDto
+            // {
+            //     AbilityName = ability.AbilityName,
+            //     Description = ability.Description
+            // };
+
             return Ok(ability);
         }
 
         // POST: api/BlasphemyAbilities
         [HttpPost]
-        public async Task<IActionResult> CreateAbility([FromBody] BlasphemyAbilities ability)
+        public async Task<IActionResult> CreateAbility([FromBody] BlasphemyAbilitiesDto abilityDto)
         {
+            // Mapeia o DTO para a entidade
+            var ability = new BlasphemyAbilities
+            {
+                BlasphemyId = abilityDto.BlasphemyId,
+                AbilityName = abilityDto.AbilityName,
+                Description = abilityDto.Description
+            };
+
             _context.Set<BlasphemyAbilities>().Add(ability);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, ability);
+
+            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, abilityDto);
         }
 
         // PUT: api/BlasphemyAbilities/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAbility(long id, [FromBody] BlasphemyAbilities ability)
+        public async Task<IActionResult> UpdateAbility(long id, [FromBody] BlasphemyAbilitiesDto abilityDto)
         {
-            if (id != ability.Id)
-                return BadRequest("Ability ID mismatch.");
-
             var existingAbility = await _context.Set<BlasphemyAbilities>().FindAsync(id);
             if (existingAbility == null)
                 return NotFound("Ability not found.");
 
-            existingAbility.AbilityName = ability.AbilityName;
-            existingAbility.Description = ability.Description;
+            // Atualiza os valores da entidade com base no DTO
+            existingAbility.AbilityName = abilityDto.AbilityName;
+            existingAbility.Description = abilityDto.Description;
 
             _context.Entry(existingAbility).State = EntityState.Modified;
             await _context.SaveChangesAsync();

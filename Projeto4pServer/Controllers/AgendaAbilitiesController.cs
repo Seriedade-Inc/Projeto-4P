@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
+using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
 
 namespace Projeto4pServer.Controllers
@@ -23,6 +24,14 @@ namespace Projeto4pServer.Controllers
             var abilities = await _context.Set<AgendaAbilities>()
                 .Include(a => a.Agenda)
                 .ToListAsync();
+
+            // // Mapeia para DTO
+            // var abilitiesDto = abilities.Select(a => new AgendaAbilitiesDto
+            // {
+            //     AbilityName = a.AbilityName,
+            //     Description = a.Description
+            // }).ToList();
+
             return Ok(abilities);
         }
 
@@ -37,31 +46,69 @@ namespace Projeto4pServer.Controllers
             if (ability == null)
                 return NotFound("Ability not found.");
 
+            // // Mapeia para DTO
+            // var abilityDto = new AgendaAbilitiesDto
+            // {
+            //     AbilityName = ability.AbilityName,
+            //     Description = ability.Description
+            // };
+
             return Ok(ability);
         }
 
         // POST: api/AgendaAbilities
         [HttpPost]
-        public async Task<IActionResult> CreateAbility([FromBody] AgendaAbilities ability)
+        public async Task<IActionResult> CreateAbility([FromBody] AgendaAbilitiesDto abilityDto)
         {
+            if (string.IsNullOrWhiteSpace(abilityDto.AbilityName) ||
+                string.IsNullOrWhiteSpace(abilityDto.Description))
+            {
+                return BadRequest("All fields except must be filled.");
+            }
+
+            if (abilityDto.AgendaId == null || 
+                !await _context.Agendas.AnyAsync(a => a.Id == abilityDto.AgendaId))
+            {
+                return BadRequest("Invalid AgendaId. The agenda does not exist.");
+            }
+
+            // Mapeia o DTO para a entidade
+            var ability = new AgendaAbilities
+            {   
+                AgendaId = abilityDto.AgendaId,
+                AbilityName = abilityDto.AbilityName,
+                Description = abilityDto.Description
+            };
+
             _context.Set<AgendaAbilities>().Add(ability);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, ability);
+
+            return CreatedAtAction(nameof(GetAbility), new { id = ability.Id }, abilityDto);
         }
 
         // PUT: api/AgendaAbilities/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAbility(long id, [FromBody] AgendaAbilities ability)
+        public async Task<IActionResult> UpdateAbility(long id, [FromBody] AgendaAbilitiesDto abilityDto)
         {
-            if (id != ability.Id)
-                return BadRequest("Ability ID mismatch.");
-
             var existingAbility = await _context.Set<AgendaAbilities>().FindAsync(id);
             if (existingAbility == null)
                 return NotFound("Ability not found.");
 
-            existingAbility.AbilityName = ability.AbilityName;
-            existingAbility.Description = ability.Description;
+            if (string.IsNullOrWhiteSpace(abilityDto.AbilityName) ||
+                string.IsNullOrWhiteSpace(abilityDto.Description))
+            {
+                return BadRequest("All fields except must be filled.");
+            }
+
+            if (abilityDto.AgendaId == null || 
+                !await _context.Agendas.AnyAsync(a => a.Id == abilityDto.AgendaId))
+            {
+                return BadRequest("Invalid AgendaId. The agenda does not exist.");
+            }
+            // Atualiza os valores da entidade com base no DTO
+            existingAbility.AgendaId = abilityDto.AgendaId;
+            existingAbility.AbilityName = abilityDto.AbilityName;
+            existingAbility.Description = abilityDto.Description;
 
             _context.Entry(existingAbility).State = EntityState.Modified;
             await _context.SaveChangesAsync();

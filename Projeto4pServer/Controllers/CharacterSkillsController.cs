@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
+using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
 
 namespace Projeto4pServer.Controllers
@@ -26,23 +27,54 @@ namespace Projeto4pServer.Controllers
             if (characterSkills == null)
                 return NotFound("Character skills not found.");
 
+            // Mapeia para DTO
+            // var characterSkillsDto = new CharacterSkillsDto
+            // {
+            //     Force = characterSkills.Force,
+            //     Conditioning = characterSkills.Conditioning,
+            //     Coordination = characterSkills.Coordination,
+            //     Covert = characterSkills.Covert,
+            //     Interfacing = characterSkills.Interfacing,
+            //     Investigation = characterSkills.Investigation,
+            //     Authority = characterSkills.Authority,
+            //     Surveillance = characterSkills.Surveillance,
+            //     Negotiation = characterSkills.Negotiation,
+            //     Connection = characterSkills.Connection
+            // };
+
             return Ok(characterSkills);
         }
 
         // POST: api/CharacterSkills
         [HttpPost]
-        public async Task<IActionResult> CreateCharacterSkills([FromBody] CharacterSkills characterSkills)
+        public async Task<IActionResult> CreateCharacterSkills(long characterId, [FromBody] CharacterSkillsDto characterSkillsDto)
         {
-            var character = await _context.Characters.FindAsync(characterSkills.CharacterId);
+            var character = await _context.Characters.FindAsync(characterId);
             if (character == null)
                 return NotFound("Character not found.");
 
             // Verifica se já existem habilidades para o personagem
             var existingSkills = await _context.CharacterSkills
-                .FirstOrDefaultAsync(cs => cs.CharacterId == characterSkills.CharacterId);
+                .FirstOrDefaultAsync(cs => cs.CharacterId == characterId);
 
             if (existingSkills != null)
                 return BadRequest("Character skills already exist.");
+
+            // Mapeia o DTO para a entidade
+            var characterSkills = new CharacterSkills
+            {
+                CharacterId = characterId,
+                Force = characterSkillsDto.Force,
+                Conditioning = characterSkillsDto.Conditioning,
+                Coordination = characterSkillsDto.Coordination,
+                Covert = characterSkillsDto.Covert,
+                Interfacing = characterSkillsDto.Interfacing,
+                Investigation = characterSkillsDto.Investigation,
+                Authority = characterSkillsDto.Authority,
+                Surveillance = characterSkillsDto.Surveillance,
+                Negotiation = characterSkillsDto.Negotiation,
+                Connection = characterSkillsDto.Connection
+            };
 
             // Validação dos valores das habilidades
             if (!ValidateSkillValues(characterSkills))
@@ -51,12 +83,12 @@ namespace Projeto4pServer.Controllers
             _context.CharacterSkills.Add(characterSkills);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetCharacterSkills), new { characterId = characterSkills.CharacterId }, characterSkills);
+            return CreatedAtAction(nameof(GetCharacterSkills), new { characterId = characterId }, characterSkillsDto);
         }
 
         // PUT: api/CharacterSkills/{characterId}
         [HttpPut("{characterId}")]
-        public async Task<IActionResult> UpdateCharacterSkills(long characterId, [FromBody] CharacterSkills updatedSkills)
+        public async Task<IActionResult> UpdateCharacterSkills(long characterId, [FromBody] CharacterSkillsDto updatedSkillsDto)
         {
             var characterSkills = await _context.CharacterSkills
                 .FirstOrDefaultAsync(cs => cs.CharacterId == characterId);
@@ -65,23 +97,35 @@ namespace Projeto4pServer.Controllers
                 return NotFound("Character skills not found.");
 
             // Validação dos valores das habilidades
-            if (!ValidateSkillValues(updatedSkills))
+            if (!ValidateSkillValues(new CharacterSkills
+            {
+                Force = updatedSkillsDto.Force,
+                Conditioning = updatedSkillsDto.Conditioning,
+                Coordination = updatedSkillsDto.Coordination,
+                Covert = updatedSkillsDto.Covert,
+                Interfacing = updatedSkillsDto.Interfacing,
+                Investigation = updatedSkillsDto.Investigation,
+                Authority = updatedSkillsDto.Authority,
+                Surveillance = updatedSkillsDto.Surveillance,
+                Negotiation = updatedSkillsDto.Negotiation,
+                Connection = updatedSkillsDto.Connection
+            }))
                 return BadRequest("Skill values must be between 0 and 4.");
 
             // Atualiza os valores das habilidades
-            characterSkills.Force = updatedSkills.Force;
-            characterSkills.Conditioning = updatedSkills.Conditioning;
-            characterSkills.Coordination = updatedSkills.Coordination;
-            characterSkills.Covert = updatedSkills.Covert;
-            characterSkills.Interfacing = updatedSkills.Interfacing;
-            characterSkills.Investigation = updatedSkills.Investigation;
-            characterSkills.Authority = updatedSkills.Authority;
-            characterSkills.Surveillance = updatedSkills.Surveillance;
-            characterSkills.Negotiation = updatedSkills.Negotiation;
-            characterSkills.Connection = updatedSkills.Connection;
+            characterSkills.Force = updatedSkillsDto.Force;
+            characterSkills.Conditioning = updatedSkillsDto.Conditioning;
+            characterSkills.Coordination = updatedSkillsDto.Coordination;
+            characterSkills.Covert = updatedSkillsDto.Covert;
+            characterSkills.Interfacing = updatedSkillsDto.Interfacing;
+            characterSkills.Investigation = updatedSkillsDto.Investigation;
+            characterSkills.Authority = updatedSkillsDto.Authority;
+            characterSkills.Surveillance = updatedSkillsDto.Surveillance;
+            characterSkills.Negotiation = updatedSkillsDto.Negotiation;
+            characterSkills.Connection = updatedSkillsDto.Connection;
 
             await _context.SaveChangesAsync();
-            return Ok("Character skills updated successfully.");
+            return NoContent();
         }
 
         // DELETE: api/CharacterSkills/{characterId}

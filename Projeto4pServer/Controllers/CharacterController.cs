@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
+using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
 
 namespace Projeto4pServer.Controllers
@@ -73,8 +74,6 @@ namespace Projeto4pServer.Controllers
             var character = new Character
             {   
                 Name = characterDto.Name,
-                Agenda = characterDto.Agenda,
-                Blasfemia = characterDto.Blasfemia,
                 Gender = characterDto.Gender,
                 Heigth = characterDto.Heigth,
                 Weigth = characterDto.Weigth,
@@ -87,11 +86,6 @@ namespace Projeto4pServer.Controllers
                 XP = characterDto.XP,
                 Advance = characterDto.Advance,
                 KitPoints = characterDto.KitPoints,
-                Inventories = characterDto.Inventories.Select(i => new Inventory
-                {
-                    ItemName = i.ItemName,
-                    Quantity = i.Quantity
-                }).ToList(),
                 Burst = characterDto.Burst,
                 SinOverflow = characterDto.SinOverflow,
                 Marks = characterDto.Marks
