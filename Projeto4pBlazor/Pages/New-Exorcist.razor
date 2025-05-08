@@ -1,5 +1,8 @@
 @page "/New-Exorcist"
 @using Microsoft.AspNetCore.Components
+@using System.Net.Http
+@using System.Net.Http.Json
+@inject HttpClient Http
 
 <PageTitle>New Exorcist</PageTitle>
 
@@ -19,7 +22,6 @@
             <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
             <input id="name" 
                    @bind="Name"
-                   @oninput="UpdateTexts"
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
                    placeholder="ENTER YOUR NAME" 
                    required />
@@ -28,10 +30,9 @@
         <div class="mb-4">
             <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
             <input id="age" 
-                   @bind="Age" 
-                   @oninput="UpdateTexts"
+                   @bind="Age"
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                   placeholder="ENTER YOUR AGE" 
+                   placeholder="ENTER YOUR AGE"
                    required />
         </div>
 
@@ -39,37 +40,37 @@
             <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
             <select id="agenda" 
                     @bind="Agenda"
-                    @bind:event="onchange"
                     class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
                     required>
                 <option value="">Select your Agenda</option>
-
+                <!-- Opções de Agenda podem ser adicionadas aqui -->
             </select>
-            
-            @if (!string.IsNullOrEmpty(AgendaText))
-            {
-                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @AgendaText
-                </div>
-            }
         </div>
 
         <div class="mb-6">
             <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
             <select id="blasphemy"
-                    @bind="Blasphemy"
-                    @bind:event="onchange"
+                    @bind="SelectedBlasphemyId"
                     class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
                     required>
-
                 <option value="">Select your Blasphemy</option>
-
+                @if (isLoading)
+                {
+                    <option value="" disabled>Loading Blasphemies...</option>
+                }
+                else
+                {
+                    @foreach (var blasphemy in blasphemies.OrderBy(b => b.BlasphemyName))
+                    {
+                        <option value="@blasphemy.Id">@blasphemy.BlasphemyName</option>
+                    }
+                }
             </select>
             
-            @if (!string.IsNullOrEmpty(BlasphemyText))
+            @if (!string.IsNullOrEmpty(SelectedBlasphemyId))
             {
                 <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @BlasphemyText
+                    @((MarkupString)GetBlasphemyDescription())
                 </div>
             }
         </div>
@@ -81,45 +82,73 @@
                 <p><span class="font-semibold">XID:</span> @Xid</p>
                 <p><span class="font-semibold">Name:</span> @Name</p>
                 <p><span class="font-semibold">Age:</span> @Age</p>
-                <p><span class="font-semibold">Agenda:</span> @Agenda - @AgendaText</p>
-                <p><span class="font-semibold">Blasphemy:</span> @Blasphemy - @BlasphemyText</p>
+                <p><span class="font-semibold">Agenda:</span> @Agenda</p>
+                <p><span class="font-semibold">Blasphemy:</span> @GetSelectedBlasphemyName()</p>
+                <p class="mt-2 italic">@((MarkupString)GetBlasphemyDescription())</p>
             </div>
         }
     </form>
 </div>
 
+
 @code {
+    public class Blasphemy
+    {
+        public long Id { get; set; }
+        public string BlasphemyName { get; set; }
+        public string Fact { get; set; }
+        public string Passive { get; set; }
+        public List<object> BlasphemyAbilities { get; set; }
+    }
+
     private string Xid = "";
     private string Name = "";
     private int? Age;
-    private string _agenda = "";
-    private string _blasphemy = "";
-    private string Agenda
+    private string Agenda = "";
+    private string SelectedBlasphemyId = "";
+    private List<Blasphemy> blasphemies = new();
+    private bool isLoading = true;
+    private string errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
     {
-        get => _agenda;
-        set
+        try
         {
-            _agenda = value;
-            UpdateTexts(); // Atualiza o texto relacionado automaticamente
+            var response = await Http.GetAsync("/api/Blasphemy");
+            
+            if (response.IsSuccessStatusCode)
+            {
+                blasphemies = await response.Content.ReadFromJsonAsync<List<Blasphemy>>();
+                
+                // Verifica se "Tension" existe na lista
+                var tensionExists = blasphemies.Any(b => 
+                    b.BlasphemyName.Equals("Tension", StringComparison.OrdinalIgnoreCase));
+                
+                if (!tensionExists)
+                {
+                    Console.WriteLine("Tension not found in blasphemies list");
+                }
+            }
+            else
+            {
+                errorMessage = $"Error: {response.StatusCode}";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load Blasphemies: {ex.Message}";
+            Console.WriteLine(errorMessage);
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 
-    private string Blasphemy
-    {
-        get => _blasphemy;
-        set
-        {
-            _blasphemy = value;
-            UpdateTexts(); // Atualiza o texto relacionado automaticamente (aham)
-        }
-    }
-    private string AgendaText = "";
-    private string BlasphemyText = "";
 
     private void OnXidInput(ChangeEventArgs e)
     {
         Xid = e.Value?.ToString()?.ToUpper() ?? string.Empty;
-        UpdateTexts();
     }
 
     private bool ShowProfileSummary()
@@ -127,34 +156,34 @@
         return !string.IsNullOrEmpty(Xid) && 
                !string.IsNullOrEmpty(Name) && 
                Age.HasValue &&
-               !string.IsNullOrEmpty(Agenda) && 
-               !string.IsNullOrEmpty(Blasphemy);
+               !string.IsNullOrEmpty(Agenda) &&
+               !string.IsNullOrEmpty(SelectedBlasphemyId);
     }
 
-    private void UpdateTexts()
+    private string GetSelectedBlasphemyName()
     {
-        AgendaText = GetAgendaText(Agenda);
-        BlasphemyText = GetBlasphemyText(Blasphemy);
-        StateHasChanged();
+        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
+        return selected?.BlasphemyName ?? "Unknown";
     }
-    private string GetAgendaText(string agenda)
+
+    private string GetBlasphemyDescription()
     {
-        return agenda switch
+        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
+        if (selected == null) return "";
+    
+        var description = new System.Text.StringBuilder();
+    
+        if (!string.IsNullOrEmpty(selected.Fact))
         {
-
-
-            _ => ""
-        };
-    }
-
-    private string GetBlasphemyText(string blasphemy)
-    {
-        return blasphemy switch
+            description.AppendLine($"<b>Fact:</b> {selected.Fact}\n");
+        }
+    
+        if (!string.IsNullOrEmpty(selected.Passive))
         {
- 
-            _ => ""
-        };
-    }
-} 
+            description.AppendLine($"<b>Passive:</b> {selected.Passive}\n");
+        }
+    
+        return description.ToString();
+}
+}
 
-Falta: Poderes de Agenda e Blasphemy / Exportação de JSON 
