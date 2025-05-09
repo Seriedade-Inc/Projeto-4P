@@ -35,7 +35,7 @@ namespace Projeto4pServer.Controllers
             if (user == null)
                 return Unauthorized("Credenciais incorretas, tente novamente.");
 
-            return Ok(new { message = "Login bem-sucedido", userId = user.Id });
+            return Ok(new { message = "Login bem-sucedido", userId = user.Id, userName = user.UserName });
         }
 
         [HttpGet]

@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject HttpClient Http
+@using Projeto4pServer.DTOs
 
 <header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-2 border-b border-white">
     <div class="flex items-end p-2">
@@ -8,7 +9,26 @@
         </NavLink>
     </div>
     <div>
-        <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ToggleLoginPopup">Login</button>
+        @if (isLoggedIn)
+        {
+            <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ShowLogoutConfirmation">Welcome, @AtualUserName!</button>
+        }
+        else
+        {
+            <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ToggleLoginPopup">Login</button>
+        }
+        @if (isLogoutConfirmationVisible)
+        {
+            <div class="fixed inset-0 flex bg-opacity-50 backdrop-blur-md items-center justify-center">
+                <div class="bg-neutral-900 p-6 rounded shadow-lg">
+                    <h2 class="text-lg text-gray-50 font-bold mb-4">Are you sure you want to log out?</h2>
+                    <div class="flex justify-end">
+                        <button class="bg-red-950 hover:bg-red-900 text-white px-4 py-2 rounded mr-2" @onclick="ConfirmLogout">Yes, Log Out</button>
+                        <button class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded" @onclick="CancelLogout">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </header>
 <main class="pt-16">
@@ -70,8 +90,11 @@
 @code {
     private bool isLoginPopupVisible = false;
     private bool isRegistering = false;
+    private bool isLogoutConfirmationVisible = false;
+    private bool isLoggedIn = false; // Indica se o usuário está logado
+    private string username = string.Empty; // Para registro e exibição
 
-    private string username = string.Empty; // Para registro
+    public string AtualUserName { get; set; } = string.Empty; // Nome de usuário atual
     private string email = string.Empty; 
     private string password = string.Empty;
     private string errorMessage = string.Empty;
@@ -105,13 +128,21 @@
     {
         try
         {
-            var response = await Http.PostAsJsonAsync("api/User/login", new { Email = email, Password = password });
+            var response = await Http.PostAsJsonAsync("api/User/login", new { userName = username, Email = email, Password = password });
             if (response.IsSuccessStatusCode)
             {
                 // Login bem-sucedido
-                var result = await response.Content.ReadFromJsonAsync<dynamic>();
-                Console.WriteLine($"Login successful: {result}");
-                ToggleLoginPopup();
+                var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+                if (result != null)
+                {
+                    email = result.Email; // Obtém o email do retorno da API
+                    username = result.UserName; // Obtém o username do retorno da API
+                    isLoggedIn = true; // Marca como logado
+                    Console.WriteLine($"Email: {email}, Username: {username}");
+                    AtualUserName = username; // Atualiza o nome de usuário atual
+                    ToggleLoginPopup();
+                }
+                Console.WriteLine($"Email: {email}, Username: {username}");
             }
             else
             {
@@ -145,5 +176,25 @@
         email = string.Empty;
         password = string.Empty;
         errorMessage = string.Empty;
+    }
+
+    private void ConfirmLogout()
+    {
+        isLoggedIn = false; // Define o estado como deslogado
+        username = string.Empty; // Limpa o nome do usuário
+        email = string.Empty; // Limpa o email
+        password = string.Empty; // Limpa a senha
+        errorMessage = string.Empty; // Limpa mensagens de erro
+        isLogoutConfirmationVisible = false; // Fecha a confirmação
+    }
+
+    private void ShowLogoutConfirmation()
+    {
+        isLogoutConfirmationVisible = true;
+    }
+
+    private void CancelLogout()
+    {
+        isLogoutConfirmationVisible = false;
     }
 }
