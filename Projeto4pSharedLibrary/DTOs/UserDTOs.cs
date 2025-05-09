@@ -28,4 +28,11 @@ namespace Projeto4pServer.DTOs
         public string NewPassword { get; set; } = string.Empty;
     }
 
+    public class LoginResponse
+    {
+        public string Email { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        // Add other fields if needed (e.g., Token, UserId, etc.)
+    }
+
 }
