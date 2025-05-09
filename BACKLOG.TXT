@@ -1,0 +1,23 @@
+BACKLOG
+
+Como usuário do aplicativo, eu quero criar e gerenciar personagens de maneira modular, para que eu possa ativamente utilizar o site em jogo.
+
+- O usuário consegue criar personagens que são salvos na database para fácil acesso.
+- O usuário consegue editar as informações do personagem como quiser.
+- O usuário consegue interagir com as mecânicas do jogo dinâmica.
+
+
+Como usuário do aplicativo, eu quero importar e exportar personagens em formato de JSON, para que eu possa compartilhar personagens com outros usuários.
+
+- O usuário é capaz de importar personagens e editá-los como normal.
+- O usuário é capaz de exportar personagens para que outros usuários o importem.
+
+
+Como usuário do aplicativo, eu quero uma página que me permita criar e anotar Pecados (Criaturas do Jogo), para que eu possa usufruir disso tanto como jogador quanto mestre de jogo quanto jogador.
+
+- O usuário é capaz de interagir com um ambiente de anotação específica e salvar mudanças.
+
+
+Como usuário do aplicativo, eu quero um sistema de login, para que os meus usos das ferramentas do site fique garantido através da database.
+
+- As informações e usos do usuário são totalmente integradas com seu login.
