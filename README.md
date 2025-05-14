@@ -1,10 +1,10 @@
+
 # Projeto-4P
 # TEMERITY//  
 
-**Nome do Projeto:** TEMERITY//
+**Link do Site:** [[Temerity](https://temerity.seriedadeinc.com)]
 
-**Link do Site:** [https://temerity.seriedadeinc.com]
-**Link do Trello:**[https://trello.com/invite/b/67c0f383182efad2a39f2578/ATTI79572483998788607e020189d669fb668B2A2405/projeto-4p]
+**Link do Trello:**[[Trello](https://trello.com/invite/b/67c0f383182efad2a39f2578/ATTI79572483998788607e020189d669fb668B2A2405/projeto-4p)]
 
 ## Sobre  
   
