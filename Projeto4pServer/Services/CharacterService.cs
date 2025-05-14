@@ -56,6 +56,8 @@ namespace Projeto4pServer.Services
 
             var character = new Character
             {
+                UserId = userId,
+                CharacterXID = characterDto.CharacterXID,
                 Name = characterDto.Name,
                 Gender = characterDto.Gender,
                 Heigth = characterDto.Heigth,

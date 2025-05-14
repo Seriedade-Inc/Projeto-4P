@@ -12,7 +12,6 @@
             <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
             <input id="xid" maxlength="4" 
                    @bind="Xid"
-                   @oninput="OnXidInput"
                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" 
                    placeholder="INSERT YOUR XID" 
                    required />
@@ -39,12 +38,25 @@
         <div class="mb-4">
             <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
             <select id="agenda" 
-                    @bind="Agenda"
+                    @bind="SelectedAgendaId"
                     class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
                     required>
                 <option value="">Select your Agenda</option>
-                <!-- Opções de Agenda podem ser adicionadas aqui -->
+                @if (agendas != null)
+                {
+                    @foreach (var agenda in agendas.OrderBy(a => a.AgendaName))
+                    {
+                        <option value="@agenda.AgendaName">@agenda.AgendaName</option>
+                    }
+                }
             </select>
+    
+            @if (!string.IsNullOrEmpty(SelectedAgendaId))
+            {
+                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
+                    @((MarkupString)GetAgendaDescription())
+                </div>
+            }
         </div>
 
         <div class="mb-6">
@@ -74,19 +86,6 @@
                 </div>
             }
         </div>
-
-        @if (ShowProfileSummary())
-        {
-            <div class="mt-6 p-4 border border-purple-600 rounded-lg bg-gray-900 text-purple-200">
-                <h3 class="font-bold text-lg mb-2">Exorcist Profile Summary:</h3>
-                <p><span class="font-semibold">XID:</span> @Xid</p>
-                <p><span class="font-semibold">Name:</span> @Name</p>
-                <p><span class="font-semibold">Age:</span> @Age</p>
-                <p><span class="font-semibold">Agenda:</span> @Agenda</p>
-                <p><span class="font-semibold">Blasphemy:</span> @GetSelectedBlasphemyName()</p>
-                <p class="mt-2 italic">@((MarkupString)GetBlasphemyDescription())</p>
-            </div>
-        }
     </form>
 </div>
 
@@ -100,72 +99,98 @@
         public string Passive { get; set; }
         public List<object> BlasphemyAbilities { get; set; }
     }
+    
+    public class Agenda
+    {
+        public string AgendaName { get; set; } = string.Empty;
+        public string NormalItem { get; set; } = string.Empty;
+        public string BoldItem { get; set; } = string.Empty;
+        public string SpecialRule { get; set; } = string.Empty;
+    }
+
 
     private string Xid = "";
     private string Name = "";
     private int? Age;
-    private string Agenda = "";
     private string SelectedBlasphemyId = "";
+    private string SelectedAgendaId = "";
     private List<Blasphemy> blasphemies = new();
+    private List<Agenda> agendas = new();
     private bool isLoading = true;
     private string errorMessage = "";
 
-    protected override async Task OnInitializedAsync()
+protected override async Task OnInitializedAsync()
+{
+    try
     {
-        try
+        // Carregar Blasphemies
+        var blasphemyResponse = await Http.GetAsync("/api/Blasphemy");
+        if (blasphemyResponse.IsSuccessStatusCode)
         {
-            var response = await Http.GetAsync("/api/Blasphemy");
-            
-            if (response.IsSuccessStatusCode)
-            {
-                blasphemies = await response.Content.ReadFromJsonAsync<List<Blasphemy>>();
-                
-                // Verifica se "Tension" existe na lista
-                var tensionExists = blasphemies.Any(b => 
-                    b.BlasphemyName.Equals("Tension", StringComparison.OrdinalIgnoreCase));
-                
-                if (!tensionExists)
-                {
-                    Console.WriteLine("Tension not found in blasphemies list");
-                }
-            }
-            else
-            {
-                errorMessage = $"Error: {response.StatusCode}";
-            }
+            blasphemies = await blasphemyResponse.Content.ReadFromJsonAsync<List<Blasphemy>>() ?? new List<Blasphemy>();
         }
-        catch (Exception ex)
+        else
         {
-            errorMessage = $"Failed to load Blasphemies: {ex.Message}";
-            Console.WriteLine(errorMessage);
+            errorMessage = $"Error loading Blasphemies: {blasphemyResponse.StatusCode}";
         }
-        finally
+
+        // Carregar Agendas
+        var agendaResponse = await Http.GetAsync("/api/Agenda");
+        if (agendaResponse.IsSuccessStatusCode)
         {
-            isLoading = false;
+            agendas = await agendaResponse.Content.ReadFromJsonAsync<List<Agenda>>() ?? new List<Agenda>();
+        }
+        else
+        {
+            errorMessage = $"Error loading Agendas: {agendaResponse.StatusCode}";
         }
     }
-
-
-    private void OnXidInput(ChangeEventArgs e)
+    catch (Exception ex)
     {
-        Xid = e.Value?.ToString()?.ToUpper() ?? string.Empty;
+        errorMessage = $"Failed to load data: {ex.Message}";
+        Console.WriteLine(errorMessage);
     }
-
-    private bool ShowProfileSummary()
+    finally
     {
-        return !string.IsNullOrEmpty(Xid) && 
-               !string.IsNullOrEmpty(Name) && 
-               Age.HasValue &&
-               !string.IsNullOrEmpty(Agenda) &&
-               !string.IsNullOrEmpty(SelectedBlasphemyId);
+        isLoading = false;
     }
+}
 
+    private string GetSelectedAgendaName()
+{
+    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
+    return selected?.AgendaName ?? "Unknown";
+}
     private string GetSelectedBlasphemyName()
     {
         var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
         return selected?.BlasphemyName ?? "Unknown";
     }
 
+    private string GetAgendaDescription()
+{
+    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
+    if (selected == null) return "";
+
+    var description = new System.Text.StringBuilder();
+
+    if (!string.IsNullOrEmpty(selected.NormalItem))
+    {
+        description.AppendLine($"<b>Normal Item:</b> {selected.NormalItem}<br>");
+    }
+
+    if (!string.IsNullOrEmpty(selected.BoldItem))
+    {
+        description.AppendLine($"<b>Bold Item:</b> {selected.BoldItem}<br>");
+    }
+
+    if (!string.IsNullOrEmpty(selected.SpecialRule))
+    {
+        description.AppendLine($"<b>Special Rule:</b> {selected.SpecialRule}");
+    }
+
+    return description.ToString();
+}
     private string GetBlasphemyDescription()
     {
         var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
@@ -187,3 +212,4 @@
 }
 }
 
+ 

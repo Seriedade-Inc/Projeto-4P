@@ -1,7 +1,63 @@
 @page "/Agents"
+@inject HttpClient Http
+@using Projeto4pSharedLibrary.Classes
 
 <main>
-  <div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
-    <h1 class="justify-center text-9xl text-white font-bold">WIP</h1>
+    <div class="flex flex-wrap justify-center bg-black text-white min-h-screen p-4">
+        @if (characters == null)
+        {
+            <p>Loading agents...</p>
+        }
+        else if (!characters.Any())
+        {
+            <p>No agents found.</p>
+        }
+        else
+        {
+            @foreach (var character in characters)
+            {
+                <div class="bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64">
+                    <h2 class="text-xl font-bold text-purple-400">Name: @character.Name</h2>
+                    <p><strong>XID:</strong> @character.CharacterXID</p>
+                    <p><strong>Blasphemy:</strong> 
+                        @if (character.CharBlasphemies != null && character.CharBlasphemies.Any())
+                        {
+                            @character.CharBlasphemies.First().Blasphemy.BlasphemyName
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+                    </p>
+                    <p><strong>Agenda:</strong> 
+                        @if (character.CharAgendas != null && character.CharAgendas.Any())
+                        {
+                            @character.CharAgendas.First().Agenda.AgendaName
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+                    </p>
+                </div>
+            }
+        }
     </div>
 </main>
+
+@code {
+    private List<Character>? characters;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Chama o endpoint para buscar os personagens do usuário logado
+            characters = await Http.GetFromJsonAsync<List<Character>>("api/User/Character");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching characters: {ex.Message}");
+        }
+    }
+}
