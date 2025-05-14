@@ -25,3 +25,14 @@
 - Matheus Cunha Nogueira - 06006159
 - Miguel Chaves Roberto de Oliveira - 06006125
 - Vitor Garcia Gonzaga Filho - 06006002
+
+
+## Entregas
+Link do Diagrama dos componentes do produto: [[Link]](https://drive.google.com/file/d/13rJ1jsaF47vaUftRK3WCWa5iQQI4wxwe/view?usp=sharing)
+
+Backend Completo disponível em: [[Backend]](https://github.com/Seriedade-Inc/Projeto-4P/tree/main/Projeto4pServer)
+
+Utilizamos a api Scalar para os testes de endpoint, basta iniciar a aplicação com dotnet run e acessar:
+http://localhost:5149/scalar/v1
+
+Segue link do vídeo Apresentando o projeto: [[Vídeo]](https://drive.google.com/drive/folders/1MwUtanLbtf6BMd5wWkxNeOBIbFOubd3o?usp=sharing)
