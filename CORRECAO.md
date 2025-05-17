@@ -25,16 +25,18 @@
 
 - [*] **Vídeo de apresentação (até 10 minutos)**  
   - [ ] Apresentar como se fosse para investidor.
-  - [ ] Explicar arquitetura escolhida.
-  - [ ] Demonstrar implementação do sistema.
+  - [X] Explicar arquitetura escolhida.
+  - [X] Demonstrar implementação do sistema.
   - [ ] Destacar técnicas de engenharia de software utilizadas.
 
 
 NAO CRIOU A CAMADA REPOSITORY
 USOU INCORRETAMENTE A CADA SERVICE COMO SE FOSSE REPOSITORY
 A CAMADA SERVICE, POR SUA VEZ, PERDEU O OBJETIVO ORIGINAL
-NÃO USOU TRY/CATCH EM TODOS OS CONTROLES
-NÃO APRESENTOU O VIDEO
-NAO APRESETOU O DIAGRAMA DE COMPONENTES
 
-NOTA 4
+NÃO USOU TRY/CATCH EM TODOS OS CONTROLES
+
+NAO APRESENTOU O DIAGRAMA DE COMPONENTES
+(NO LUGAR APRESENTOU UM DIAGRAMA DE ENTIDADE E RELACIONAMENTO)
+
+NOTA 7,5
