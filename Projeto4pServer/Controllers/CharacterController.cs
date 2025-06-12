@@ -32,6 +32,18 @@ namespace Projeto4pServer.Controllers
             return Ok(characters);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetCharactersByUserId(Guid userId)
+        {
+            var characters = await _service.GetCharactersByUserIdAsync(userId);
+            if (characters == null || !characters.Any())
+            {
+                return NotFound("No characters found for this user.");
+            }
+
+            return Ok(characters);
+        }
+
         // POST: api/User/Character/create
         [HttpPost("create")]
         public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto)

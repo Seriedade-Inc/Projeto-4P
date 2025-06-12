@@ -13,8 +13,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250505003352_UpdateCharacterSkillsRelationship")]
-    partial class UpdateCharacterSkillsRelationship
+    [Migration("20250612010938_AddAgendaAndBlasfemiaToCharacter")]
+    partial class AddAgendaAndBlasfemiaToCharacter
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -337,6 +337,9 @@ namespace Projeto4pServer.Migrations
 
                     b.Property<long>("CharacterId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("ItemDescription")
+                        .HasColumnType("text");
 
                     b.Property<string>("ItemName")
                         .IsRequired()

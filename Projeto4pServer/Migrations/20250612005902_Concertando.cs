@@ -5,7 +5,7 @@
 namespace Projeto4pServer.Migrations
 {
     /// <inheritdoc />
-    public partial class FixedCharacterRelationship : Migration
+    public partial class Concertando : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

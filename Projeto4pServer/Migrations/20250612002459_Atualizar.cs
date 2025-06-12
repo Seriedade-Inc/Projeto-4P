@@ -5,7 +5,7 @@
 namespace Projeto4pServer.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateCharacterSkillsRelationship : Migration
+    public partial class Atualizar : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

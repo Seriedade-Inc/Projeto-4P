@@ -13,8 +13,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250508175954_AddItemDescriptionToInventory")]
-    partial class AddItemDescriptionToInventory
+    [Migration("20250612005902_Concertando")]
+    partial class Concertando
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

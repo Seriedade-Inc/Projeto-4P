@@ -8,11 +8,11 @@ namespace Projeto4pSharedLibrary.Classes
         public Guid UserId { get; set; } // Relacionamento com o User
         public string Name { get; set; } = string.Empty;
         public string CharacterXID { get; set; } = string.Empty;
-        public string Agenda { get; set; } = string.Empty;
-        public string Blasfemia { get; set; } = string.Empty;
+        // public string Agenda { get; set; } = string.Empty;
+        // public string Blasfemia { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
-        public string Heigth { get; set; } = string.Empty;
-        public string Weigth { get; set; } = string.Empty;
+        public string Height { get; set; } = string.Empty;
+        public string Weight { get; set; } = string.Empty;
         public string HairColor { get; set; } = string.Empty;
         public string EyeColor { get; set; } = string.Empty;
         public int CAT { get; set; }
