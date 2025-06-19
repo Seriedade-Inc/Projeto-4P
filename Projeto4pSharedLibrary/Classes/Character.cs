@@ -28,7 +28,7 @@ namespace Projeto4pSharedLibrary.Classes
         public CharacterSkills? CharacterSkills { get; set; }
         public int Burst { get; set; }
         public int SinOverflow { get; set;}
-        public List<int> Marks { get; set; } = new List<int>();
+        public int Marks { get; set; } 
 
     }
 }

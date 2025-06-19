@@ -1,4 +1,4 @@
-/*! tailwindcss v4.1.7 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.10 | MIT License | https://tailwindcss.com */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rubik+Dirt&display=swap');
 @layer properties;
 :root, :host {
@@ -14,17 +14,14 @@
   --color-cyan-400: oklch(0.789 0.154 211.53);
   --color-indigo-900: oklch(0.359 0.144 278.697);
   --color-indigo-950: oklch(0.257 0.09 281.288);
-  --color-purple-200: oklch(0.902 0.063 306.703);
   --color-purple-300: oklch(0.827 0.119 306.383);
   --color-purple-400: oklch(0.714 0.203 305.504);
-  --color-purple-600: oklch(0.558 0.288 302.321);
   --color-purple-800: oklch(0.438 0.218 303.724);
   --color-gray-50: oklch(0.985 0.002 247.839);
   --color-gray-100: oklch(0.967 0.003 264.542);
   --color-gray-600: oklch(0.446 0.03 256.802);
   --color-gray-700: oklch(0.373 0.034 259.733);
   --color-gray-800: oklch(0.278 0.033 256.848);
-  --color-gray-900: oklch(0.21 0.034 264.665);
   --color-neutral-800: oklch(0.269 0 0);
   --color-neutral-900: oklch(0.205 0 0);
   --color-black: #000;
@@ -43,13 +40,10 @@
   --text-4xl--line-height: calc(2.5 / 2.25);
   --text-9xl: 8rem;
   --text-9xl--line-height: 1;
-  --font-weight-semibold: 600;
   --font-weight-bold: 700;
   --leading-tight: 1.25;
   --radius-lg: 0.5rem;
   --blur-md: 12px;
-  --default-transition-duration: 150ms;
-  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   --default-font-family: var(--font-sans);
   --default-font-feature-settings: var(--font-sans--font-feature-settings);
   --default-font-variation-settings: var(

@@ -1,16 +1,17 @@
 @page "/Agents"
 @inject HttpClient Http
+@inject UserSession UserSession
 @using Projeto4pServer.DTOs
 
 <main>
     <div class="flex flex-wrap justify-center bg-black text-white min-h-screen p-4">
         @if (characters == null)
         {
-            <p>Loading agents...</p>
+            <p>Carregando agentes...</p>
         }
         else if (!characters.Any())
         {
-            <p>No agents found.</p>
+            <p>Você ainda não criou nenhum agente. Clique em "Criar Agente" para começar!</p>
         }
         else
         {
@@ -18,12 +19,13 @@
             {
                 <div class="bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64">
                     <h2 class="text-xl font-bold text-purple-400">@character.Name</h2>
+                    <p><strong>Id do Usuário:</strong> @character.UserId</p>
                     <p><strong>Age:</strong> @character.CAT</p>
-                    @if (character.CharBlasphemies != null && character.CharBlasphemies.Any())
+                    @if (character.CharBlasphemies != null && character.CharBlasphemies.Any() && character.CharBlasphemies.First().Blasphemy != null)
                     {
                         <p><strong>Blasphemy:</strong> @character.CharBlasphemies.First().Blasphemy.Name</p>
                     }
-                    @if (character.CharAgendas != null && character.CharAgendas.Any())
+                    @if (character.CharAgendas != null && character.CharAgendas.Any() && character.CharAgendas.First().Agenda != null)
                     {
                         <p><strong>Agenda:</strong> @character.CharAgendas.First().Agenda.Name</p>
                     }
@@ -40,12 +42,15 @@
     {
         try
         {
-            // Substitua "api/Character" pela rota correta da sua API para buscar os characters do usuário
-            characters = await Http.GetFromJsonAsync<List<CharacterDto>>("api/Character");
+            if (UserSession.UserId != null)
+            {
+                // Busca apenas os personagens do usuário logado
+                characters = await Http.GetFromJsonAsync<List<CharacterDto>>($"api/User/Character/{UserSession.UserId}");
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching characters: {ex.Message}");
+            Console.WriteLine($"Error fetching characters Não está logado: {ex.Message}");
         }
     }
 }

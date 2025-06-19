@@ -32,7 +32,7 @@ namespace Projeto4pServer.Controllers
             return Ok(characters);
         }
 
-        [HttpGet]
+        [HttpGet("{userId}")]
         public async Task<IActionResult> GetCharactersByUserId(Guid userId)
         {
             var characters = await _service.GetCharactersByUserIdAsync(userId);
