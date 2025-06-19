@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 namespace Projeto4pServer.DTOs
 {
     public class AgendaDto
@@ -6,7 +7,8 @@ namespace Projeto4pServer.DTOs
         public string NormalItem { get; set; } = string.Empty;
         public string BoldItem { get; set; } = string.Empty;
         public string SpecialRule { get; set; } = string.Empty;
+        [JsonIgnore]
         public string? Name { get; set; }
-    // public List<AgendaAbilitiesDto>? Abilities { get; set; }
+        // public List<AgendaAbilitiesDto>? Abilities { get; set; }
     }
 }

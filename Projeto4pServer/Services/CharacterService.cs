@@ -44,6 +44,7 @@ namespace Projeto4pServer.Services
                     .ThenInclude(cb => cb.BlasphemyAbility)
                 .Include(c => c.CharacterSkills)
                 .FirstOrDefaultAsync(c => c.Id == id);
+                
         }
 
         public async Task<List<CharacterDto>> GetCharactersByUserIdAsync(Guid userId)
@@ -61,9 +62,22 @@ namespace Projeto4pServer.Services
                 Id = c.Id,
                 UserId = c.UserId,
                 Name = c.Name,
+                CharacterXID = c.CharacterXID,
+                Gender = c.Gender,
                 Heigth = c.Height,
+                Weigth = c.Weight,
+                HairColor = c.HairColor,
                 EyeColor = c.EyeColor,
                 CAT = c.CAT,
+                DivineAgony = c.DivineAgony,
+                Stress = c.Stress,
+                Injury = c.Injury,
+                XP = c.XP,
+                Advance = c.Advance,
+                KitPoints = c.KitPoints,
+                Burst = c.Burst,
+                SinOverflow = c.SinOverflow,
+                Marks = c.Marks,
                 CharBlasphemies = c.CharBlasphemies.Select(cb => new CharBlasphemyDto
                 {
                     Blasphemy = new BlasphemyDto { Name = cb.Blasphemy?.BlasphemyName }

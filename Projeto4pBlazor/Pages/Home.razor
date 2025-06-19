@@ -1,34 +1,45 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components
+@inject UserSession UserSession
+@inject NavigationManager NavigationManager
+@inherits LayoutComponentBase
 
 <PageTitle>Home</PageTitle>
 
 <main>
   <div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
     <div class="mt-24 ml-6 flex flex-col items-start gap-2">
-      <NavLink href="/New-Exorcist" class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white">
+      <button class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white"
+              @onclick='() => NavigateIfLoggedIn("/New-Exorcist")'>
         NEW EXORCIST
-      </NavLink>
+      </button>
       <span class="text-gray-600">
         >>Make a new character
       </span>
       <br>
-      <NavLink href="/Agents" class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white">
+      <button class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white"
+              @onclick='() => NavigateIfLoggedIn("/Agents")'>
         AGENTS
-      </NavLink>
+      </button>
       <span class="text-gray-600">
         >>Browse your exorcists
       </span>
       <br>
-      <NavLink href="/Sin-Registry" class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white">
+      <button class="cain-button h-18 w-120 rounded bg-black px-4 py-5 pl-4 text-left text-3xl text-white font-bebas ring-2 ring-white"
+              @onclick='() => NavigateIfLoggedIn("/Sin-Registry")'>
         SIN REGISTRY
-      </NavLink>
+      </button>
       <span class="text-gray-600">
         >>Register and track your sins
       </span>
     </div>
+<<<<<<< HEAD
     <div class="items-top mt-6 ml-6 flex flex-grow justify-end">
       <h1 class="font-rubikDirt italic text-center text-[92px] me-72">
+=======
+    <div class="hidden sm:flex flex-grow items-start justify-center ml-6 mt-0">
+      <h1 class="font-rubikDirt italic text-center text-[92px] me-24 max-w-full">
+>>>>>>> 235b5a43725d79ecb757fb15ee58834cdfd9c3c2
         Until<br>
         the Stain<br>
         has been<br>
@@ -38,3 +49,35 @@
     </div>
   </div>
 </main>
+
+@if (showLoginPopup)
+{
+    <div class="fixed inset-0 flex bg-opacity-50 backdrop-blur-md items-center justify-center">
+        <div class="bg-neutral-900 p-6 rounded shadow-lg">
+            <h2 class="text-lg text-gray-50 font-bold mb-4">Você precisa estar logado para acessar esta funcionalidade.</h2>
+            <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded ml-2" @onclick="CloseLoginPopup">Fechar</button>
+        </div>
+    </div>
+}
+
+@code {
+    private bool showLoginPopup = false;
+
+    private void NavigateIfLoggedIn(string url)
+    {
+        // Você pode usar UserSession.UserId ou um parâmetro global de login
+        if (UserSession.UserId != null)
+        {
+            NavigationManager.NavigateTo(url);
+        }
+        else
+        {
+            showLoginPopup = true;
+        }
+    }
+
+    private void CloseLoginPopup()
+    {
+        showLoginPopup = false;
+    }
+}
