@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @inject UserSession UserSession
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 @using Projeto4pServer.DTOs
 
 <header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-2 border-b border-white">
@@ -189,6 +190,8 @@
         password = string.Empty; // Limpa a senha
         errorMessage = string.Empty; // Limpa mensagens de erro
         isLogoutConfirmationVisible = false; // Fecha a confirmação
+        UserSession.UserId = null; // Limpa o ID do usuário na sessão
+        NavigationManager.NavigateTo("/");
     }
 
     private void ShowLogoutConfirmation()

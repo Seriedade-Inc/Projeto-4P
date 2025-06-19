@@ -2,6 +2,7 @@
 @inject HttpClient Http
 @inject UserSession UserSession
 @using Projeto4pServer.DTOs
+@inject NavigationManager NavigationManager
 
 <main>
     <div class="flex flex-wrap justify-center bg-black text-white min-h-screen p-4">
@@ -37,20 +38,32 @@
 
 @code {
     private List<CharacterDto>? characters;
+    private readonly Guid adminId = new Guid("01978a0f-8c46-7a95-a278-e19886de81a2");
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            if (UserSession.UserId != null)
+            if (UserSession.UserId == adminId)
+            {
+                // Se o usuário for o admin, busca todos os personagens
+                characters = await Http.GetFromJsonAsync<List<CharacterDto>>("api/User/Character");
+            }
+            else if (UserSession.UserId != null)
             {
                 // Busca apenas os personagens do usuário logado
                 characters = await Http.GetFromJsonAsync<List<CharacterDto>>($"api/User/Character/{UserSession.UserId}");
             }
+            else
+            {
+                // Se o usuário não estiver logado, redireciona para a página inicial
+                NavigationManager.NavigateTo("/");        
+                return;
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching characters Não está logado: {ex.Message}");
+            Console.WriteLine($"Error fetching characters: {ex.Message}");
         }
     }
 }
