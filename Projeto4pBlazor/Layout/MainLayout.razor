@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject UserSession UserSession
 @inject HttpClient Http
 @using Projeto4pServer.DTOs
 
@@ -98,6 +99,7 @@
     private string email = string.Empty; 
     private string password = string.Empty;
     private string errorMessage = string.Empty;
+    private Guid? userId = null;
 
     private async Task HandleRegister()
     {
@@ -138,11 +140,12 @@
                     email = result.Email; // Obtém o email do retorno da API
                     username = result.UserName; // Obtém o username do retorno da API
                     isLoggedIn = true; // Marca como logado
-                    Console.WriteLine($"Email: {email}, Username: {username}");
                     AtualUserName = username; // Atualiza o nome de usuário atual
+                    userId = result.UserId;
+                    UserSession.UserId = userId;
+                    UserSession.UserName = AtualUserName;
                     ToggleLoginPopup();
                 }
-                Console.WriteLine($"Email: {email}, Username: {username}");
             }
             else
             {

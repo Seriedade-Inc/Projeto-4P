@@ -19,7 +19,7 @@ public class CreateCharacterDto
     public int KitPoints { get; set; }
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
-    public List<int> Marks { get; set; } = new List<int>();
+    public int Marks { get; set; } 
 }
 
 // DTO para PUT
@@ -41,7 +41,7 @@ public class UpdateCharacterDto
     public int KitPoints { get; set; }
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
-    public List<int> Marks { get; set; } = new List<int>();
+    public int Marks { get; set; }
 }
 
 // DTO para GET
@@ -69,6 +69,6 @@ public class CharacterDto
     public List<CharBlasphemyDto>? CharBlasphemies { get; set; }
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
-    public List<int> Marks { get; set; } = new List<int>();
+    public int Marks { get; set; } 
 }
 }

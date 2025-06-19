@@ -63,7 +63,7 @@ namespace Projeto4pServer.Data
 
             modelBuilder.Entity<Blasphemy>()
                 .HasMany(b => b.BlasphemyAbilities)
-                .WithOne()
+                .WithOne(a => a.Blasphemy)
                 .HasForeignKey(ba => ba.BlasphemyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
