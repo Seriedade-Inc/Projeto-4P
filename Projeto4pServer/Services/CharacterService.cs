@@ -46,6 +46,35 @@ namespace Projeto4pServer.Services
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<List<CharacterDto>> GetCharactersByUserIdAsync(Guid userId)
+        {
+            var characters = await _context.Characters
+                .Where(c => c.UserId == userId)
+                .Include(c => c.CharBlasphemies)
+                    .ThenInclude(cb => cb.Blasphemy)
+                .Include(c => c.CharAgendas)
+                    .ThenInclude(ca => ca.Agenda)
+                .ToListAsync();
+
+            return characters.Select(c => new CharacterDto
+            {
+                Id = c.Id,
+                UserId = c.UserId,
+                Name = c.Name,
+                Heigth = c.Height,
+                EyeColor = c.EyeColor,
+                CAT = c.CAT,
+                CharBlasphemies = c.CharBlasphemies.Select(cb => new CharBlasphemyDto
+                {
+                    Blasphemy = new BlasphemyDto { Name = cb.Blasphemy?.BlasphemyName }
+                }).ToList(),
+                CharAgendas = c.CharAgendas.Select(ca => new CharAgendaDto
+                {
+                    Agenda = new AgendaDto { Name = ca.Agenda?.AgendaName }
+                }).ToList()
+            }).ToList();
+        }
+
         public async Task<Character> CreateCharacterAsync(Guid userId, CreateCharacterDto characterDto)
         {
             var user = await _context.User.FindAsync(userId);
@@ -60,8 +89,8 @@ namespace Projeto4pServer.Services
                 CharacterXID = characterDto.CharacterXID,
                 Name = characterDto.Name,
                 Gender = characterDto.Gender,
-                Heigth = characterDto.Heigth,
-                Weigth = characterDto.Weigth,
+                Height = characterDto.Heigth,
+                Weight = characterDto.Weigth,
                 HairColor = characterDto.HairColor,
                 EyeColor = characterDto.EyeColor,
                 CAT = characterDto.CAT,
@@ -93,8 +122,8 @@ namespace Projeto4pServer.Services
             character.Name = updatedCharacter.Name;
             character.CharacterXID = updatedCharacter.CharacterXID;
             character.Gender = updatedCharacter.Gender;
-            character.Heigth = updatedCharacter.Heigth;
-            character.Weigth = updatedCharacter.Weigth;
+            character.Height = updatedCharacter.Heigth;
+            character.Weight = updatedCharacter.Weigth;
             character.HairColor = updatedCharacter.HairColor;
             character.EyeColor = updatedCharacter.EyeColor;
             character.CAT = updatedCharacter.CAT;

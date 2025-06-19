@@ -31,6 +31,7 @@ namespace Projeto4pServer.DTOs
     public class LoginResponse
     {
         public string Email { get; set; } = string.Empty;
+        public Guid UserId { get; set; }
         public string UserName { get; set; } = string.Empty;
         // Add other fields if needed (e.g., Token, UserId, etc.)
     }
