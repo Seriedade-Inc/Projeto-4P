@@ -2,214 +2,34 @@
 @using Microsoft.AspNetCore.Components
 @using System.Net.Http
 @using System.Net.Http.Json
-@inject HttpClient Http
 
 <PageTitle>New Exorcist</PageTitle>
 
-<div class="min-h-screen bg-black text-purple-800">
-    <form class="max-w-sm mx-auto pt-12 pb-12">
-        <div class="mb-4">
-            <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
-            <input id="xid" maxlength="4" 
-                   @bind="Xid"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" 
-                   placeholder="INSERT YOUR XID" 
-                   required />
+<div class="min-h-screen bg-black p-4">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-gray-900 border-2 border-purple-500 p-4 rounded-lg shadow-lg col-span-2">
+            <h1 class="text-2xl font-bold text-purple-300">TESTESTEST</h1>
         </div>
-
-        <div class="mb-4">
-            <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
-            <input id="name" 
-                   @bind="Name"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                   placeholder="ENTER YOUR NAME" 
-                   required />
+        
+        <div class="bg-gray-900 border-2 border-purple-500 p-4 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-2 text-purple-300">Ex:</h2>
+            <div class="space-y-2 text-gray-200">
+                <p>6/6 x:0/4</p>
+                <p>IN:0/3</p>
+                <p>DA:0/3</p>
+            </div>
         </div>
-
-        <div class="mb-4">
-            <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
-            <input id="age" 
-                   @bind="Age"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                   placeholder="ENTER YOUR AGE"
-                   required />
+        
+        <div class="bg-gray-900 border-2 border-purple-500 p-4 rounded-lg shadow-lg">
+            <h2 class="text-xl font-semibold mb-2 text-purple-300">BURST</h2>
+            <p class="text-gray-200">SIN</p>
         </div>
-
-        <div class="mb-4">
-            <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
-            <select id="agenda" 
-                    @bind="SelectedAgendaId"
-                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                    required>
-                <option value="">Select your Agenda</option>
-                @if (agendas != null)
-                {
-                    @foreach (var agenda in agendas.OrderBy(a => a.AgendaName))
-                    {
-                        <option value="@agenda.AgendaName">@agenda.AgendaName</option>
-                    }
-                }
-            </select>
-    
-            @if (!string.IsNullOrEmpty(SelectedAgendaId))
-            {
-                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @((MarkupString)GetAgendaDescription())
-                </div>
-            }
+        
+        <div class="bg-gray-900 border-2 border-purple-500 p-4 rounded-lg shadow-lg col-span-2">
+            <h2 class="text-xl font-semibold mb-2 text-purple-300">RUND</h2>
+            <p class="font-bold text-purple-300">KIT:</p>
+            <p class="text-gray-200">1-8</p>
+            <p class="text-gray-200">BMS</p>
         </div>
-
-        <div class="mb-6">
-            <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
-            <select id="blasphemy"
-                    @bind="SelectedBlasphemyId"
-                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                    required>
-                <option value="">Select your Blasphemy</option>
-                @if (isLoading)
-                {
-                    <option value="" disabled>Loading Blasphemies...</option>
-                }
-                else
-                {
-                    @foreach (var blasphemy in blasphemies.OrderBy(b => b.BlasphemyName))
-                    {
-                        <option value="@blasphemy.Id">@blasphemy.BlasphemyName</option>
-                    }
-                }
-            </select>
-            
-            @if (!string.IsNullOrEmpty(SelectedBlasphemyId))
-            {
-                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @((MarkupString)GetBlasphemyDescription())
-                </div>
-            }
-        </div>
-    </form>
+    </div>
 </div>
-
-
-@code {
-    public class Blasphemy
-    {
-        public long Id { get; set; }
-        public string BlasphemyName { get; set; }
-        public string Fact { get; set; }
-        public string Passive { get; set; }
-        public List<object> BlasphemyAbilities { get; set; }
-    }
-    
-    public class Agenda
-    {
-        public string AgendaName { get; set; } = string.Empty;
-        public string NormalItem { get; set; } = string.Empty;
-        public string BoldItem { get; set; } = string.Empty;
-        public string SpecialRule { get; set; } = string.Empty;
-    }
-
-
-    private string Xid = "";
-    private string Name = "";
-    private int? Age;
-    private string SelectedBlasphemyId = "";
-    private string SelectedAgendaId = "";
-    private List<Blasphemy> blasphemies = new();
-    private List<Agenda> agendas = new();
-    private bool isLoading = true;
-    private string errorMessage = "";
-
-protected override async Task OnInitializedAsync()
-{
-    try
-    {
-        // Carregar Blasphemies
-        var blasphemyResponse = await Http.GetAsync("/api/Blasphemy");
-        if (blasphemyResponse.IsSuccessStatusCode)
-        {
-            blasphemies = await blasphemyResponse.Content.ReadFromJsonAsync<List<Blasphemy>>() ?? new List<Blasphemy>();
-        }
-        else
-        {
-            errorMessage = $"Error loading Blasphemies: {blasphemyResponse.StatusCode}";
-        }
-
-        // Carregar Agendas
-        var agendaResponse = await Http.GetAsync("/api/Agenda");
-        if (agendaResponse.IsSuccessStatusCode)
-        {
-            agendas = await agendaResponse.Content.ReadFromJsonAsync<List<Agenda>>() ?? new List<Agenda>();
-        }
-        else
-        {
-            errorMessage = $"Error loading Agendas: {agendaResponse.StatusCode}";
-        }
-    }
-    catch (Exception ex)
-    {
-        errorMessage = $"Failed to load data: {ex.Message}";
-        Console.WriteLine(errorMessage);
-    }
-    finally
-    {
-        isLoading = false;
-    }
-}
-
-    private string GetSelectedAgendaName()
-{
-    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
-    return selected?.AgendaName ?? "Unknown";
-}
-    private string GetSelectedBlasphemyName()
-    {
-        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
-        return selected?.BlasphemyName ?? "Unknown";
-    }
-
-    private string GetAgendaDescription()
-{
-    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
-    if (selected == null) return "";
-
-    var description = new System.Text.StringBuilder();
-
-    if (!string.IsNullOrEmpty(selected.NormalItem))
-    {
-        description.AppendLine($"<b>Normal Item:</b> {selected.NormalItem}<br>");
-    }
-
-    if (!string.IsNullOrEmpty(selected.BoldItem))
-    {
-        description.AppendLine($"<b>Bold Item:</b> {selected.BoldItem}<br>");
-    }
-
-    if (!string.IsNullOrEmpty(selected.SpecialRule))
-    {
-        description.AppendLine($"<b>Special Rule:</b> {selected.SpecialRule}");
-    }
-
-    return description.ToString();
-}
-    private string GetBlasphemyDescription()
-    {
-        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
-        if (selected == null) return "";
-    
-        var description = new System.Text.StringBuilder();
-    
-        if (!string.IsNullOrEmpty(selected.Fact))
-        {
-            description.AppendLine($"<b>Fact:</b> {selected.Fact}\n");
-        }
-    
-        if (!string.IsNullOrEmpty(selected.Passive))
-        {
-            description.AppendLine($"<b>Passive:</b> {selected.Passive}\n");
-        }
-    
-        return description.ToString();
-}
-}
-
- 
