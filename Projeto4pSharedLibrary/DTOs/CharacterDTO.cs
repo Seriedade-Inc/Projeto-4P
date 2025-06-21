@@ -3,6 +3,7 @@ namespace Projeto4pServer.DTOs
 public class CreateCharacterDto
 {
     public Guid UserId { get; set; }
+    public string? Imagem { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
@@ -25,6 +26,7 @@ public class CreateCharacterDto
 // DTO para PUT
 public class UpdateCharacterDto
 {
+    public string? Imagem { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
@@ -49,6 +51,7 @@ public class CharacterDto
 {
     public long Id { get; set; }
     public Guid UserId { get; set; }
+    public string Imagem { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;

@@ -224,6 +224,10 @@ namespace Projeto4pServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Imagem")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("Injury")
                         .HasColumnType("integer");
 
