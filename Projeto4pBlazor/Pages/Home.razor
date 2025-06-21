@@ -2,7 +2,6 @@
 @using Microsoft.AspNetCore.Components
 @inject UserSession UserSession
 @inject NavigationManager NavigationManager
-@inherits LayoutComponentBase
 
 <PageTitle>Home</PageTitle>
 
@@ -60,7 +59,6 @@
 
     private void NavigateIfLoggedIn(string url)
     {
-        // Você pode usar UserSession.UserId ou um parâmetro global de login
         if (UserSession.UserId != null)
         {
             NavigationManager.NavigateTo(url);

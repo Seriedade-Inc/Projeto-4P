@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Projeto4pServer.DTOs;
 using Projeto4pServer.Services;
+using System.Security.Claims;
 
 
 namespace Projeto4pServer.Controllers
@@ -35,7 +38,27 @@ namespace Projeto4pServer.Controllers
             if (user == null)
                 return Unauthorized("Credenciais incorretas, tente novamente.");
 
-            return Ok(new { message = "Login bem-sucedido", userId = user.Id, userName = user.UserName });
+            // claims pro login (segurança httponly)
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new(ClaimTypes.Name, user.UserName),
+                new(ClaimTypes.Email, user.Email)
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Sign in and issue cookie
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity),
+                new AuthenticationProperties
+                {
+                    IsPersistent = true, // persistent cookie
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14)
+                });
+
+            // Return user info (optional)
+            return Ok(new { user.Id, user.UserName, user.Email });
         }
 
         [HttpGet]
@@ -63,8 +86,8 @@ namespace Projeto4pServer.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            await _userService.LogoutAsync();
-            return Ok(new { message = "Logged out" });
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
         }
 
         [HttpDelete("delete/{email}")]

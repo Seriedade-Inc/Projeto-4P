@@ -1,215 +1,243 @@
 @page "/New-Exorcist"
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
 @using System.Net.Http
 @using System.Net.Http.Json
 @inject HttpClient Http
 
 <PageTitle>New Exorcist</PageTitle>
 
-<div class="min-h-screen bg-black text-purple-800">
-    <form class="max-w-sm mx-auto pt-12 pb-12">
-        <div class="mb-4">
-            <label for="xid" class="block text-white text-sm font-bold mb-2">XID:</label>
-            <input id="xid" maxlength="4" 
-                   @bind="Xid"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline uppercase" 
-                   placeholder="INSERT YOUR XID" 
-                   required />
-        </div>
+<div class="grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-2 p-4 text-purple-500 bg-black min-h-screen font-mono">
+  <div class="border border-white p-2 space-y-2">
+    <h2 class="font-bold text-purple-400">Registered Exorcist</h2>
 
-        <div class="mb-4">
-            <label for="name" class="block text-white text-sm font-bold mb-2">Name:</label>
-            <input id="name" 
-                   @bind="Name"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                   placeholder="ENTER YOUR NAME" 
-                   required />
-        </div>
+    <!-- Linha com Name, XID e CAT-->
+    <div class="flex gap-4">
+      <div class="flex-1">
+        <label for="name" class="block text-sm">Name</label>
+        <input id="name" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
 
-        <div class="mb-4">
-            <label for="age" class="block text-white text-sm font-bold mb-2">Age:</label>
-            <input id="age" 
-                   @bind="Age"
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                   placeholder="ENTER YOUR AGE"
-                   required />
-        </div>
+      <div class="flex-1">
+        <label for="xid" class="block text-sm">XID</label>
+        <input id="xid" type="text" maxlength="4" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" />
+      </div>
 
-        <div class="mb-4">
-            <label for="agenda" class="block text-white text-sm font-bold mb-2">Agenda:</label>
-            <select id="agenda" 
-                    @bind="SelectedAgendaId"
-                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                    required>
-                <option value="">Select your Agenda</option>
-                @if (agendas != null)
-                {
-                    @foreach (var agenda in agendas.OrderBy(a => a.AgendaName))
-                    {
-                        <option value="@agenda.AgendaName">@agenda.AgendaName</option>
-                    }
-                }
-            </select>
+      <div class="flex-1">
+        <label for="xid" class="block text-sm">CAT</label>
+        <input id="xid" type="number" value="1" max="7" min="1" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
+    </div>
     
-            @if (!string.IsNullOrEmpty(SelectedAgendaId))
-            {
-                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @((MarkupString)GetAgendaDescription())
-                </div>
-            }
-        </div>
+    <!-- Linha com Agenda e Blasphemy -->
+    <div class="flex gap-4">
+      <div class="flex-1">
+        <label for="agenda" class="block text-sm">Agenda</label>
+        <input id="agenda" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
+    
+    <div class="flex-1">
+        <label for="blasphemy" class="block text-sm">Blasphemy</label>
+        <input id="blasphemy" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+       </div>
+    </div>
+    
+    <!-- Linha com Gender,-- Height e Weight -->
+    <div class="flex gap-4">
+      <div class="flex-1">
+        <label for="gender" class="block text-sm">Gender</label>
+        <input id="gender" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
 
-        <div class="mb-6">
-            <label for="blasphemy" class="block text-white text-sm font-bold mb-2">Blasphemy:</label>
-            <select id="blasphemy"
-                    @bind="SelectedBlasphemyId"
-                    class="bg-black shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 leading-tight focus:outline-none focus:shadow-outline" 
-                    required>
-                <option value="">Select your Blasphemy</option>
-                @if (isLoading)
-                {
-                    <option value="" disabled>Loading Blasphemies...</option>
-                }
-                else
-                {
-                    @foreach (var blasphemy in blasphemies.OrderBy(b => b.BlasphemyName))
-                    {
-                        <option value="@blasphemy.Id">@blasphemy.BlasphemyName</option>
-                    }
-                }
-            </select>
-            
-            @if (!string.IsNullOrEmpty(SelectedBlasphemyId))
-            {
-                <div class="mt-2 p-2 bg-gray-800 text-purple-300 rounded text-sm">
-                    @((MarkupString)GetBlasphemyDescription())
-                </div>
-            }
-        </div>
-    </form>
+      <div class="flex-1">
+        <label for="height" class="block text-sm">Height</label>
+        <input id="height" type="number" value="0" maxlength="4" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" />
+      </div>
+
+      <div class="flex-1">
+        <label for="weight" class="block text-sm">Weight</label>
+        <input id="weight" type="number" value="0" max="7" min="0" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
+    </div>
+
+    <!-- Linha com Eyes e Hair -->
+    <div class="flex gap-4">
+      <div class="flex-1">
+        <label for="eyes" class="block text-sm">Eyes</label>
+        <input id="eyes" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      </div>
+    
+    <div class="flex-1">
+        <label for="hair" class="block text-sm">Hair</label>
+        <input id="hair" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+       </div>
+    </div>
+
+  </div>
+
+
+    <div class="border border-white p-2">
+      <h2 class="font-bold text-purple-400">Registered Kit</h2>
+
+      <div class="flex gap-2 mt-2"
+
+      <textarea
+        class="w-110 h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
+        placeholder="Escreva aqui..."></textarea>
+
+      <div class="flex flex-col gap-2">
+        <label for="kitpoints" class="block text-sm">Kit Points</label>
+        <input id="kitpoints" type="number" value="5" max="9" min="0" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+      
+            <div class="flex flex-col gap-2"></div>
+        <label for="scrip" class="block text-sm">Scrip</label>
+        <input id="scrip" type="number" value="0" min="0" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+
+      </div>
+    </div> 
+   </div> 
+
+    <div class="border border-white p-2">
+      <h2 class="font-bold text-purple-400">Agenda</h2>
+      <textarea
+        class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
+        placeholder="Escreva aqui..."></textarea>
+    </div> 
+    
+
+    <div class="border border-white p-2">
+      <h2 class="font-bold text-purple-400">Exorcist Status</h2>
+
+    </div> 
+
+
+    <div class="border border-white p-2">
+      <h2 class="font-bold text-purple-400">Registered Skills</h2>
+        
+  <table class="w-full text-left text-white">
+    <thead>
+      <tr>
+        <th class="w-1/4"></th>
+        <th class="text-center">0</th>        
+        <th class="text-center">1</th>
+        <th class="text-center">2</th>
+        <th class="text-center">3</th>
+        <th class="text-center">4</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-purple-500">
+      <tr>
+        <td class="py-1">Force</td>
+        <td class="text-center"><input type="radio" name="force" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="force" value="1" /></td>
+        <td class="text-center"><input type="radio" name="force" value="2" /></td>
+        <td class="text-center"><input type="radio" name="force" value="3" /></td>
+        <td class="text-center"><input type="radio" name="force" value="4" /></td>
+
+      </tr>
+      <tr>
+        <td class="py-1">Conditioning</td>
+        <td class="text-center"><input type="radio" name="conditioning" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="conditioning" value="1" /></td>
+        <td class="text-center"><input type="radio" name="conditioning" value="2" /></td>
+        <td class="text-center"><input type="radio" name="conditioning" value="3" /></td>
+        <td class="text-center"><input type="radio" name="conditioning" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Coordination</td>
+        <td class="text-center"><input type="radio" name="coordination" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="coordination" value="1" /></td>
+        <td class="text-center"><input type="radio" name="coordination" value="2" /></td>
+        <td class="text-center"><input type="radio" name="coordination" value="3" /></td>
+        <td class="text-center"><input type="radio" name="coordination" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Covert</td>
+        <td class="text-center"><input type="radio" name="covert" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="covert" value="1" /></td>
+        <td class="text-center"><input type="radio" name="covert" value="2" /></td>
+        <td class="text-center"><input type="radio" name="covert" value="3" /></td>
+        <td class="text-center"><input type="radio" name="covert" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Interfacing</td>
+        <td class="text-center"><input type="radio" name="interfacing" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="interfacing" value="1" /></td>
+        <td class="text-center"><input type="radio" name="interfacing" value="2" /></td>
+        <td class="text-center"><input type="radio" name="interfacing" value="3" /></td>
+        <td class="text-center"><input type="radio" name="interfacing" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Investigation</td>
+        <td class="text-center"><input type="radio" name="investigation" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="investigation" value="1" /></td>
+        <td class="text-center"><input type="radio" name="investigation" value="2" /></td>
+        <td class="text-center"><input type="radio" name="investigation" value="3" /></td>
+        <td class="text-center"><input type="radio" name="investigation" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Surveillance</td>
+        <td class="text-center"><input type="radio" name="surveillance" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="surveillance" value="1" /></td>
+        <td class="text-center"><input type="radio" name="surveillance" value="2" /></td>
+        <td class="text-center"><input type="radio" name="surveillance" value="3" /></td>
+        <td class="text-center"><input type="radio" name="surveillance" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Negotiation</td>
+        <td class="text-center"><input type="radio" name="negotiation" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="negotiation" value="1" /></td>
+        <td class="text-center"><input type="radio" name="negotiation" value="2" /></td>
+        <td class="text-center"><input type="radio" name="negotiation" value="3" /></td>
+        <td class="text-center"><input type="radio" name="negotiation" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Authority</td>
+        <td class="text-center"><input type="radio" name="authority" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="authority" value="1" /></td>
+        <td class="text-center"><input type="radio" name="authority" value="2" /></td>
+        <td class="text-center"><input type="radio" name="authority" value="3" /></td>
+        <td class="text-center"><input type="radio" name="authority" value="4" /></td>
+
+      </tr>
+            <tr>
+        <td class="py-1">Connection</td>
+        <td class="text-center"><input type="radio" name="connection" value="0" checked /></td>
+        <td class="text-center"><input type="radio" name="connection" value="1" /></td>
+        <td class="text-center"><input type="radio" name="connection" value="2" /></td>
+        <td class="text-center"><input type="radio" name="connection" value="3" /></td>
+        <td class="text-center"><input type="radio" name="connection" value="4" /></td>
+
+      </tr>
+    </tbody>
+  </table>
+
+
+    </div> 
+      
+      
+
+    <div class="border border-white p-2">
+      <h2 class="font-bold text-purple-400">Blasphemy</h2>
+      <textarea
+        class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
+        placeholder="Escreva aqui..."></textarea>
+    </div>
+
+
+    
+    <div class="col-span-3 justify-end mt-4">
+        <button class="bg-purple-500 text-black font-bold px-6 py-2 rounded">REGISTER</button>
+    </div>
 </div>
 
 
 @code {
-    public class Blasphemy
-    {
-        public long Id { get; set; }
-        public string BlasphemyName { get; set; }
-        public string Fact { get; set; }
-        public string Passive { get; set; }
-        public List<object> BlasphemyAbilities { get; set; }
-    }
-    
-    public class Agenda
-    {
-        public string AgendaName { get; set; } = string.Empty;
-        public string NormalItem { get; set; } = string.Empty;
-        public string BoldItem { get; set; } = string.Empty;
-        public string SpecialRule { get; set; } = string.Empty;
-    }
-
-
-    private string Xid = "";
-    private string Name = "";
-    private int? Age;
-    private string SelectedBlasphemyId = "";
-    private string SelectedAgendaId = "";
-    private List<Blasphemy> blasphemies = new();
-    private List<Agenda> agendas = new();
-    private bool isLoading = true;
-    private string errorMessage = "";
-
-protected override async Task OnInitializedAsync()
-{
-    try
-    {
-        // Carregar Blasphemies
-        var blasphemyResponse = await Http.GetAsync("/api/Blasphemy");
-        if (blasphemyResponse.IsSuccessStatusCode)
-        {
-            blasphemies = await blasphemyResponse.Content.ReadFromJsonAsync<List<Blasphemy>>() ?? new List<Blasphemy>();
-        }
-        else
-        {
-            errorMessage = $"Error loading Blasphemies: {blasphemyResponse.StatusCode}";
-        }
-
-        // Carregar Agendas
-        var agendaResponse = await Http.GetAsync("/api/Agenda");
-        if (agendaResponse.IsSuccessStatusCode)
-        {
-            agendas = await agendaResponse.Content.ReadFromJsonAsync<List<Agenda>>() ?? new List<Agenda>();
-        }
-        else
-        {
-            errorMessage = $"Error loading Agendas: {agendaResponse.StatusCode}";
-        }
-    }
-    catch (Exception ex)
-    {
-        errorMessage = $"Failed to load data: {ex.Message}";
-        Console.WriteLine(errorMessage);
-    }
-    finally
-    {
-        isLoading = false;
-    }
 }
-
-    private string GetSelectedAgendaName()
-{
-    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
-    return selected?.AgendaName ?? "Unknown";
-}
-    private string GetSelectedBlasphemyName()
-    {
-        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
-        return selected?.BlasphemyName ?? "Unknown";
-    }
-
-    private string GetAgendaDescription()
-{
-    var selected = agendas.FirstOrDefault(a => a.AgendaName == SelectedAgendaId);
-    if (selected == null) return "";
-
-    var description = new System.Text.StringBuilder();
-
-    if (!string.IsNullOrEmpty(selected.NormalItem))
-    {
-        description.AppendLine($"<b>Normal Item:</b> {selected.NormalItem}<br>");
-    }
-
-    if (!string.IsNullOrEmpty(selected.BoldItem))
-    {
-        description.AppendLine($"<b>Bold Item:</b> {selected.BoldItem}<br>");
-    }
-
-    if (!string.IsNullOrEmpty(selected.SpecialRule))
-    {
-        description.AppendLine($"<b>Special Rule:</b> {selected.SpecialRule}");
-    }
-
-    return description.ToString();
-}
-    private string GetBlasphemyDescription()
-    {
-        var selected = blasphemies.FirstOrDefault(b => b.Id.ToString() == SelectedBlasphemyId);
-        if (selected == null) return "";
-    
-        var description = new System.Text.StringBuilder();
-    
-        if (!string.IsNullOrEmpty(selected.Fact))
-        {
-            description.AppendLine($"<b>Fact:</b> {selected.Fact}\n");
-        }
-    
-        if (!string.IsNullOrEmpty(selected.Passive))
-        {
-            description.AppendLine($"<b>Passive:</b> {selected.Passive}\n");
-        }
-    
-        return description.ToString();
-}
-}
-
- 
