@@ -3,31 +3,38 @@
 @using Microsoft.AspNetCore.Components.Web
 @using System.Net.Http
 @using System.Net.Http.Json
+@using Projeto4pServer.DTOs
+@inject UserSession UserSession
 @inject HttpClient Http
 
 <PageTitle>New Exorcist</PageTitle>
 
-<div class="grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-2 p-4 text-purple-500 bg-black min-h-screen font-mono">
-  <div class="border border-white p-2 space-y-2">
-    <h2 class="font-bold text-purple-400">Registered Exorcist</h2>
+<EditForm Model="@character" OnValidSubmit="RegisterExorcist">
+    <DataAnnotationsValidator />
 
-    <!-- Linha com Name, XID e CAT-->
-    <div class="flex gap-4">
-      <div class="flex-1">
-        <label for="name" class="block text-sm">Name</label>
-        <input id="name" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
-      </div>
 
-      <div class="flex-1">
-        <label for="xid" class="block text-sm">XID</label>
-        <input id="xid" type="text" maxlength="4" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" />
-      </div>
+    <div class="grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-2 p-4 text-purple-500 bg-black min-h-screen font-mono">
+      <div class="border border-white p-2 space-y-2">
+        <h2 class="font-bold text-purple-400">Registered Exorcist</h2>
 
-      <div class="flex-1">
-        <label for="xid" class="block text-sm">CAT</label>
-        <input id="xid" type="number" value="1" max="7" min="1" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
-      </div>
-    </div>
+        <!-- Linha com Name, XID e CAT-->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label for="name" class="block text-sm">Name</label>
+            <input @bind="character.Name" id="name" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+          </div>
+
+          <div class="flex-1">
+            <label for="xid" class="block text-sm">XID</label>
+            <input @bind="character.CharacterXID" id="xid" type="text" maxlength="4" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" />
+          </div>
+
+          <div class="flex-1">
+            <label for="xid" class="block text-sm">CAT</label>
+            <input @bind="character.CAT" id="xid" type="number" max="7" min="1" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+          </div>
+        </div>
+
     
     <!-- Linha com Agenda e Blasphemy -->
     <div class="flex gap-4">
@@ -232,12 +239,42 @@
     </div>
 
 
-    
-    <div class="col-span-3 justify-end mt-4">
-        <button class="bg-purple-500 text-black font-bold px-6 py-2 rounded">REGISTER</button>
-    </div>
+        
+        <div class="col-span-3 justify-end mt-4">
+            <button type="submit" class="bg-purple-500 text-black font-bold px-6 py-2 rounded">REGISTER</button>
+        </div>
+        
 </div>
-
+</EditForm>
 
 @code {
-}
+      private CreateCharacterDto character = new();
+      // private Guid userId = UserSession.UserId;
+
+      private async Task RegisterExorcist()
+  {
+      // Verifique se o UserId está definido
+        if (UserSession.UserId == null)
+        {
+            // Exiba mensagem ou redirecione para login
+            Console.WriteLine("Usuário não identificado.");
+            return;
+        }
+
+      var response = await Http.PostAsJsonAsync(
+          $"api/User/Character/create/{UserSession.UserId}", character
+
+
+      );
+
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Registrado com sucesso!");
+        }
+        else
+        {
+            Console.WriteLine("Erro ao registrar.");
+            Console.WriteLine($"{UserSession.UserId}");
+        }
+  }
+  }

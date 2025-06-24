@@ -45,7 +45,7 @@ namespace Projeto4pServer.Controllers
         }
 
         // POST: api/User/Character/create
-        [HttpPost("create")]
+        [HttpPost("create/{userId}")]
         public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto)
         {
             try

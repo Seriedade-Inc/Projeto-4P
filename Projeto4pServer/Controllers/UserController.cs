@@ -58,7 +58,12 @@ namespace Projeto4pServer.Controllers
                 });
 
             // Return user info (optional)
-            return Ok(new { user.Id, user.UserName, user.Email });
+            return Ok(new LoginResponse
+    {
+                UserId = user.Id, // Aqui deve ser o Guid real do usuário!
+                UserName = user.UserName,
+                Email = user.Email
+    });
         }
 
         [HttpGet]

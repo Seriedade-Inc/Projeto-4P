@@ -3,7 +3,7 @@ namespace Projeto4pServer.DTOs
 public class CreateCharacterDto
 {
     public Guid UserId { get; set; }
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty; 
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
     public string Heigth { get; set; } = string.Empty;
@@ -11,15 +11,15 @@ public class CreateCharacterDto
     public string HairColor { get; set; } = string.Empty;
     public string EyeColor { get; set; } = string.Empty;
     public int CAT { get; set; }
-    public int DivineAgony { get; set; }
-    public int Stress { get; set; }
+    public int DivineAgony { get; set; } 
+    public int Stress { get; set; } 
     public int Injury { get; set; }
-    public int XP { get; set; }
-    public int Advance { get; set; }
-    public int KitPoints { get; set; }
+    public int XP { get; set; } 
+    public int Advance { get; set; } 
+    public int KitPoints { get; set; } 
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
-    public int Marks { get; set; } 
+    public int Marks { get; set; }
 }
 
 // DTO para PUT

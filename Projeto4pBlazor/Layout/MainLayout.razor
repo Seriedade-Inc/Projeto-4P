@@ -2,9 +2,7 @@
 @inject UserSession UserSession
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-@inject IJSRuntime JS // <-- Add JS interop
 @using Projeto4pServer.DTOs
-@using Projeto4pSharedLibrary.Services
 
 <header class="bg-black fixed top-0 left-0 w-full flex items-center justify-between p-2 border-b border-white">
     <div class="flex items-end p-2">
@@ -92,36 +90,17 @@
 }
 
 @code {
-    private int loginDays = 14;
     private bool isLoginPopupVisible = false;
     private bool isRegistering = false;
     private bool isLogoutConfirmationVisible = false;
-    private bool isLoggedIn = false;
-    private string username = string.Empty;
-    public string AtualUserName { get; set; } = string.Empty;
+    private bool isLoggedIn = false; // Indica se o usuário está logado
+    private string username = string.Empty; // Para registro e exibição
+
+    public string AtualUserName { get; set; } = string.Empty; // Nome de usuário atual
     private string email = string.Empty; 
     private string password = string.Empty;
     private string errorMessage = string.Empty;
     private Guid? userId = null;
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Persistencia de login
-        var cookie = await JS.InvokeAsync<string>("blazorExtensions.ReadCookie", "auth");
-        if (!string.IsNullOrEmpty(cookie))
-        {
-            // Formato esperado: "userId|username"
-            var parts = cookie.Split('|');
-            if (parts.Length == 2 && Guid.TryParse(parts[0], out var parsedUserId))
-            {
-                userId = parsedUserId;
-                AtualUserName = parts[1];
-                UserSession.UserId = userId;
-                UserSession.UserName = AtualUserName;
-                isLoggedIn = true;
-            }
-        }
-    }
 
     private async Task HandleRegister()
     {
@@ -155,17 +134,17 @@
             var response = await Http.PostAsJsonAsync("api/User/login", new { userName = username, Email = email, Password = password });
             if (response.IsSuccessStatusCode)
             {
+                // Login bem-sucedido
                 var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
                 if (result != null)
                 {
-                    email = result.Email;
-                    username = result.UserName;
-                    isLoggedIn = true;
-                    AtualUserName = username;
+                    email = result.Email; // Obtém o email do retorno da API
+                    username = result.UserName; // Obtém o username do retorno da API
+                    isLoggedIn = true; // Marca como logado
+                    AtualUserName = username; // Atualiza o nome de usuário atual
                     userId = result.UserId;
                     UserSession.UserId = userId;
                     UserSession.UserName = AtualUserName;
-                    await JS.InvokeVoidAsync("blazorExtensions.WriteCookie", "auth", $"{userId}|{AtualUserName}", loginDays);
                     ToggleLoginPopup();
                 }
             }
@@ -203,18 +182,15 @@
         errorMessage = string.Empty;
     }
 
-    private async void ConfirmLogout()
+    private void ConfirmLogout()
     {
-        isLoggedIn = false;
-        username = string.Empty;
-        email = string.Empty;
-        password = string.Empty;
-        errorMessage = string.Empty;
-        isLogoutConfirmationVisible = false;
-        UserSession.UserId = null;
-        UserSession.UserName = null;
-        // Remove cookie
-        await JS.InvokeVoidAsync("blazorExtensions.DeleteCookie", "auth");
+        isLoggedIn = false; // Define o estado como deslogado
+        username = string.Empty; // Limpa o nome do usuário
+        email = string.Empty; // Limpa o email
+        password = string.Empty; // Limpa a senha
+        errorMessage = string.Empty; // Limpa mensagens de erro
+        isLogoutConfirmationVisible = false; // Fecha a confirmação
+        UserSession.UserId = null; // Limpa o ID do usuário na sessão
         NavigationManager.NavigateTo("/");
     }
 
