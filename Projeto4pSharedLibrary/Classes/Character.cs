@@ -6,6 +6,7 @@ namespace Projeto4pSharedLibrary.Classes
     {   
         public long Id { get; set; } // Chave primária
         public Guid UserId { get; set; } // Relacionamento com o User
+        public string Imagem { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string CharacterXID { get; set; } = string.Empty;
         // public string Agenda { get; set; } = string.Empty;

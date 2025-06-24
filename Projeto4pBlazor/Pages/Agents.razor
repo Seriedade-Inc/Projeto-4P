@@ -5,20 +5,20 @@
 @inject NavigationManager NavigationManager
 
 <main>
-    <div class="flex flex-wrap justify-center bg-black text-white min-h-screen p-4">
+    <div class="flex flex-wrap justify-center bg-black text-white p-4 min-h-screen">
         @if (characters == null)
         {
             <p>Carregando agentes...</p>
         }
         else if (!characters.Any())
         {
-            <p>Você ainda não criou nenhum agente. Clique em "Criar Agente" para começar!</p>
+            <p>Você ainda não criou nenhum agente, teste. Clique em "Criar Agente" para começar!</p>
         }
         else
         {
             @foreach (var character in characters)
             {
-                <div class="bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64">
+                <div class="bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64 h-128 overflow-y-auto">
                     <h2 class="text-xl font-bold text-purple-400">@character.Name</h2>
                     <p><strong>Id do Usuário:</strong> @character.UserId</p>
                     <p><strong>Age:</strong> @character.CAT</p>
