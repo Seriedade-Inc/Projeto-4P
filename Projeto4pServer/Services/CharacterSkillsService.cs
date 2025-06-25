@@ -2,39 +2,35 @@ using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Repository;
 
 namespace Projeto4pServer.Services
 {
     public class CharacterSkillsService : DeleteService<CharacterSkills>
     {
+        private readonly ICharacterSkillsRepository _repository;
         private readonly AppDbContext _context;
 
-        public CharacterSkillsService(AppDbContext context) : base(context)
+        public CharacterSkillsService(ICharacterSkillsRepository repository, AppDbContext context) : base(context)
         {
+            _repository = repository;
             _context = context;
         }
 
         public async Task<CharacterSkills?> GetCharacterSkillsAsync(long characterId)
         {
-            return await _context.CharacterSkills
-                .FirstOrDefaultAsync(cs => cs.CharacterId == characterId);
+            return await _repository.GetByCharacterIdAsync(characterId);
         }
 
         public async Task<CharacterSkills> CreateCharacterSkillsAsync(long characterId, CharacterSkillsDto skillsDto)
         {
             var character = await _context.Characters.FindAsync(characterId);
             if (character == null)
-            {
                 throw new KeyNotFoundException("Character not found.");
-            }
 
-            var existingSkills = await _context.CharacterSkills
-                .FirstOrDefaultAsync(cs => cs.CharacterId == characterId);
-
+            var existingSkills = await _repository.GetByCharacterIdAsync(characterId);
             if (existingSkills != null)
-            {
                 throw new ArgumentException("Character skills already exist.");
-            }
 
             var characterSkills = new CharacterSkills
             {
@@ -52,44 +48,16 @@ namespace Projeto4pServer.Services
             };
 
             if (!ValidateSkillValues(characterSkills))
-            {
                 throw new ArgumentException("Skill values must be between 0 and 4.");
-            }
 
-            _context.CharacterSkills.Add(characterSkills);
-            await _context.SaveChangesAsync();
-
-            return characterSkills;
+            return await _repository.CreateAsync(characterSkills);
         }
 
         public async Task UpdateCharacterSkillsAsync(long characterId, CharacterSkillsDto updatedSkillsDto)
         {
-            var characterSkills = await _context.CharacterSkills
-                .FirstOrDefaultAsync(cs => cs.CharacterId == characterId);
-
+            var characterSkills = await _repository.GetByCharacterIdAsync(characterId);
             if (characterSkills == null)
-            {
                 throw new KeyNotFoundException("Character skills not found.");
-            }
-
-            var updatedSkills = new CharacterSkills
-            {
-                Force = updatedSkillsDto.Force,
-                Conditioning = updatedSkillsDto.Conditioning,
-                Coordination = updatedSkillsDto.Coordination,
-                Covert = updatedSkillsDto.Covert,
-                Interfacing = updatedSkillsDto.Interfacing,
-                Investigation = updatedSkillsDto.Investigation,
-                Authority = updatedSkillsDto.Authority,
-                Surveillance = updatedSkillsDto.Surveillance,
-                Negotiation = updatedSkillsDto.Negotiation,
-                Connection = updatedSkillsDto.Connection
-            };
-
-            if (!ValidateSkillValues(updatedSkills))
-            {
-                throw new ArgumentException("Skill values must be between 0 and 4.");
-            }
 
             characterSkills.Force = updatedSkillsDto.Force;
             characterSkills.Conditioning = updatedSkillsDto.Conditioning;
@@ -102,7 +70,10 @@ namespace Projeto4pServer.Services
             characterSkills.Negotiation = updatedSkillsDto.Negotiation;
             characterSkills.Connection = updatedSkillsDto.Connection;
 
-            await _context.SaveChangesAsync();
+            if (!ValidateSkillValues(characterSkills))
+                throw new ArgumentException("Skill values must be between 0 and 4.");
+
+            await _repository.UpdateAsync(characterSkills);
         }
 
         private bool ValidateSkillValues(CharacterSkills skills)

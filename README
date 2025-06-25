@@ -1,0 +1,125 @@
+# Projeto 4P — Documentação de Boas Práticas
+
+## 1. Organização em camadas
+
+- **Apresentação:** `Controllers/`
+- **Domínio:** `Services/`
+- **Infraestrutura:** `Repository/`, `Data/`
+- Exemplos:
+  - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs)
+  - [`Repository/UserRepository.cs`](Projeto4pServer/Repository/UserRepository.cs)
+
+---
+
+## 2. Aplicação de padrões de projeto
+
+- **Repository Pattern:**
+  - [`Repository/InventoryRepository.cs`](Projeto4pServer/Repository/InventoryRepository.cs) (linhas 7-54)
+  - Usado para abstrair o acesso a dados e facilitar testes.
+
+---
+
+## 3. Princípios SOLID em prática
+
+- **Single Responsibility Principle:**
+  - Cada service e repository tem responsabilidade única.
+  - Exemplo:
+    - [`Services/UserService.cs`](Projeto4pServer/Services/UserService.cs) (linhas 11-60)
+
+---
+
+## 4. Convenções de nomenclatura claras
+
+- **Nomes claros e sem abreviações:**
+  - Exemplo: `UserRepository`, `InventoryService`, `DeleteService`
+  - [`Repository/UserRepository.cs`](Projeto4pServer/Repository/UserRepository.cs)
+  - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs)
+
+---
+
+## 5. Documentação mínima de código
+
+- **Comentários objetivos em métodos complexos:**
+  - [`Services/CharacterService.cs`](Projeto4pServer/Services/CharacterService.cs) (linhas 173-200)
+
+---
+
+## 6. Testes automatizados
+
+- **Teste unitário usando xUnit:**
+  - [`Projeto4pServer.Tests/UserServiceTests.cs`](Projeto4pServer.Tests/UserServiceTests.cs) (linhas 13-41)
+
+---
+
+## 7. Refatorações evidentes
+
+### Exemplo: Refatoração do método Delete
+
+#### Antes da refatoração (em cada Service):
+
+```csharp
+// public async Task DeleteInventoryAsync(long id)
+// {
+//     var inventoryToDelete = await _context.Set<Inventory>().FindAsync(id);
+//     if (inventoryToDelete != null)
+//     {
+//         _context.Set<Inventory>().Remove(inventoryToDelete);
+//         await _context.SaveChangesAsync();
+//     }
+// }
+```
+
+#### Depois da refatoração (DeleteService genérico):
+
+```csharp
+// filepath: Services/DeleteService.cs (linhas 8-27)
+public class DeleteService<T> where T : class
+{
+    private readonly AppDbContext _context;
+
+    public DeleteService(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task DeleteAsync(long id)
+    {
+        var entity = await _context.Set<T>().FindAsync(id);
+        if (entity == null)
+        {
+            throw new KeyNotFoundException($"{typeof(T).Name} not found.");
+        }
+
+        _context.Set<T>().Remove(entity);
+        await _context.SaveChangesAsync();
+    }
+}
+```
+
+Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<T>` e usar `DeleteAsync(id)`.
+
+---
+
+## 8. Tratamento de erros e exceções
+
+- **Uso de try/catch e respostas padronizadas:**
+  - [`Controllers/CharacterController.cs`](Projeto4pServer/Controllers/CharacterController.cs) (linhas 68-80)
+
+---
+
+## 9. Exemplos de validação de entrada
+
+- **Validação de parâmetros e proteção contra dados inválidos:**
+  - [`Services/UserService.cs`](Projeto4pServer/Services/UserService.cs) (linhas 17-34)
+  - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs) (linhas 23-46)
+
+---
+
+## 10. Heurísticas de usabilidade no frontend
+
+- **Consistência e feedback visual (CSS/Componentes):**
+  - Exemplo: `wwwroot/css/site.css` (linhas 1-50)
+
+---
+
+> **Observação:** Os números de linhas podem variar conforme alterações futuras. Consulte sempre a versão mais recente do repositório.

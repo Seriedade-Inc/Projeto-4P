@@ -6,42 +6,30 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using System;
+using Projeto4pServer.Repository;
+// ...outros usings...
 
 namespace Projeto4pServer.Services
 {
     public class CharacterService : DeleteService<Character>
     {
-        private readonly AppDbContext _context;
+        private readonly ICharacterRepository _repository;
         private readonly IWebHostEnvironment _environment;
 
-        public CharacterService(AppDbContext context, IWebHostEnvironment environment) : base(context)
+        public CharacterService(ICharacterRepository repository, AppDbContext context, IWebHostEnvironment environment) : base(context)
         {
-            _context = context;
+            _repository = repository;
             _environment = environment;
         }
 
         public async Task<List<Character>> GetAllCharactersAsync() =>
-            await _context.Characters
-                .Include(c => c.Inventories)
-                .Include(c => c.Blasphemies)
-                .Include(c => c.Agendas)
-                .Include(c => c.CharacterSkills)
-                .ToListAsync();
+            await _repository.GetAllAsync();
 
         public async Task<Character?> GetCharacterByIdAsync(long id) =>
-            await _context.Characters
-                .Include(c => c.Inventories)
-                .Include(c => c.Blasphemies)
-                .Include(c => c.Agendas)
-                .Include(c => c.CharacterSkills)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            await _repository.GetByIdAsync(id);
 
         public async Task<List<CharacterDto>> GetCharactersByUserIdAsync(Guid userId) =>
-            (await _context.Characters
-                .Where(c => c.UserId == userId)
-                .Include(c => c.Blasphemies)
-                .Include(c => c.Agendas)
-                .ToListAsync())
+            (await _repository.GetByUserIdAsync(userId))
             .Select(c => new CharacterDto
             {
                 Id = c.Id,
@@ -64,7 +52,6 @@ namespace Projeto4pServer.Services
                 Burst = c.Burst,
                 SinOverflow = c.SinOverflow,
                 Marks = c.Marks
-                // Adapte para incluir Blasphemies e Agendas se necessário no DTO
             }).ToList();
 
         public async Task<Character> CreateCharacterAsync(Guid userId, CreateCharacterDto characterDto, IFormFile? Imagem = null)
@@ -76,13 +63,9 @@ namespace Projeto4pServer.Services
                 imagemUrl = await SaveImageAndGetUrlAsync(Imagem);
             }
 
-            var user = await _context.User.FindAsync(userId);
+            // Aqui você pode usar o contexto para buscar o usuário, se necessário
+            // var user = await _context.User.FindAsync(userId);
 
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found.");
-            }
-            
             var character = new Character
             {
                 UserId = userId,
@@ -105,14 +88,12 @@ namespace Projeto4pServer.Services
                 SinOverflow = characterDto.SinOverflow,
                 Marks = characterDto.Marks
             };
-            _context.Characters.Add(character);
-            await _context.SaveChangesAsync();
-            return character;
+            return await _repository.CreateAsync(character);
         }
 
         public async Task UpdateCharacterAsync(long id, UpdateCharacterDto updatedCharacter, IFormFile? Imagem = null)
         {
-            var character = await _context.Characters.FirstOrDefaultAsync(c => c.Id == id);
+            var character = await _repository.GetByIdAsync(id);
             if (character == null)
             {
                 throw new KeyNotFoundException("Character not found.");
@@ -120,12 +101,11 @@ namespace Projeto4pServer.Services
 
             if (Imagem != null)
             {
-                // **O Imagem é o IFormFile, aqui ele é passado para o método que salva o arquivo**
                 character.Imagem = await SaveImageAndGetUrlAsync(Imagem);
             }
             else if (!string.IsNullOrWhiteSpace(updatedCharacter.Imagem))
             {
-                 character.Imagem = updatedCharacter.Imagem;
+                character.Imagem = updatedCharacter.Imagem;
             }
             else
             {
@@ -148,9 +128,20 @@ namespace Projeto4pServer.Services
             character.SinOverflow = updatedCharacter.SinOverflow;
             character.Marks = updatedCharacter.Marks;
 
-            _context.Entry(character).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _repository.UpdateAsync(character);
         }
+
+        // Antes da refatoração (dentro de CharacterService):
+        // public async Task DeleteCharacterAsync(long id)
+        // {
+        //     var characterToDelete = await _context.Characters.FindAsync(id);
+        //     if (characterToDelete != null)
+        //     {
+        //         _context.Characters.Remove(characterToDelete);
+        //         await _context.SaveChangesAsync();
+        //     }
+        // }
+        // Como o delete era genérico, agora usamos a classe base DeleteService:
 
         private async Task<string> SaveImageAndGetUrlAsync(IFormFile Imagem)
         {

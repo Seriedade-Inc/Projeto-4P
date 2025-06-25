@@ -1,11 +1,6 @@
 using Projeto4pServer.DTOs;
 using Projeto4pServer.Repository;
 using Projeto4pSharedLibrary.Classes;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
 
 namespace Projeto4pServer.Services
 {
@@ -22,6 +17,14 @@ namespace Projeto4pServer.Services
 
         public async Task<string> RegisterUserAsync(UserRegisterDto userDto)
         {
+            // Validação de campos obrigatórios
+            if (string.IsNullOrWhiteSpace(userDto.Email) ||
+                string.IsNullOrWhiteSpace(userDto.UserName) ||
+                string.IsNullOrWhiteSpace(userDto.Password))
+            {
+                return "Email, nome de usuário e senha são obrigatórios.";
+            }
+
             if (await _userRepository.EmailExistsAsync(userDto.Email))
                 return "Email já está em uso.";
 

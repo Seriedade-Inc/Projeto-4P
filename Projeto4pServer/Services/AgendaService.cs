@@ -2,28 +2,27 @@ using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
 using Microsoft.EntityFrameworkCore;
+using Projeto4pServer.Repository;
 
 namespace Projeto4pServer.Services
 {
     public class AgendaService : DeleteService<Agenda>
     {
-        private readonly AppDbContext _context;
+        private readonly IAgendaRepository _repository;
 
-        public AgendaService(AppDbContext context) : base(context)
+        public AgendaService(IAgendaRepository repository, AppDbContext context) : base(context)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task<List<Agenda>> GetAllAgendasAsync()
         {
-            return await _context.Set<Agenda>()
-                .ToListAsync();
+            return await _repository.GetAllAsync();
         }
 
         public async Task<Agenda?> GetAgendaByIdAsync(long id)
         {
-            return await _context.Set<Agenda>()
-                .FirstOrDefaultAsync(a => a.Id == id);
+            return await _repository.GetByIdAsync(id);
         }
 
         public async Task<Agenda> CreateAgendaAsync(AgendaDto agendaDto)
@@ -42,16 +41,12 @@ namespace Projeto4pServer.Services
                 AgendaText = agendaDto.AgendaText
             };
 
-            _context.Set<Agenda>().Add(agenda);
-            await _context.SaveChangesAsync();
-
-            return agenda;
+            return await _repository.CreateAsync(agenda);
         }
 
         public async Task UpdateAgendaAsync(long id, AgendaDto agendaDto)
         {
-            var existingAgenda = await _context.Set<Agenda>()
-                .FirstOrDefaultAsync(a => a.Id == id);
+            var existingAgenda = await _repository.GetByIdAsync(id);
 
             if (existingAgenda == null)
             {
@@ -62,8 +57,20 @@ namespace Projeto4pServer.Services
             existingAgenda.AgendaName = agendaDto.AgendaName;
             existingAgenda.AgendaText = agendaDto.AgendaText;
 
-            _context.Entry(existingAgenda).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _repository.UpdateAsync(existingAgenda);
         }
+
+        // Antes da refatoração (dentro de AgendaService):
+        // public async Task DeleteAgendaAsync(long id)
+        // {
+        //     var agendaToDelete = await _context.Set<Agenda>().FindAsync(id);
+        //     if (agendaToDelete != null)
+        //     {
+        //         _context.Set<Agenda>().Remove(agendaToDelete);
+        //         await _context.SaveChangesAsync();
+        //     }
+        // }
+        // Como o delete era genérico, agora usamos a classe base DeleteService:
+
     }
 }

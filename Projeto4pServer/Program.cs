@@ -14,6 +14,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository , UserRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IAgendaRepository, AgendaRepository>();
+builder.Services.AddScoped<IBlasphemyRepository, BlasphemyRepository>();
+builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+builder.Services.AddScoped<ICharacterSkillsRepository, CharacterSkillsRepository>();
 builder.Services.AddScoped<AgendaService>();
 builder.Services.AddScoped<BlasphemyService>();
 builder.Services.AddScoped<CharacterService>();
