@@ -23,28 +23,24 @@ namespace Projeto4pServer.Services
         public async Task<List<Character>> GetAllCharactersAsync() =>
             await _context.Characters
                 .Include(c => c.Inventories)
-                .Include(c => c.CharAgendas).ThenInclude(ca => ca.Agenda)
-                .Include(c => c.CharAgendas).ThenInclude(ca => ca.AgendaAbility)
-                .Include(c => c.CharBlasphemies).ThenInclude(cb => cb.Blasphemy)
-                .Include(c => c.CharBlasphemies).ThenInclude(cb => cb.BlasphemyAbility)
+                .Include(c => c.Blasphemies)
+                .Include(c => c.Agendas)
                 .Include(c => c.CharacterSkills)
                 .ToListAsync();
 
         public async Task<Character?> GetCharacterByIdAsync(long id) =>
             await _context.Characters
                 .Include(c => c.Inventories)
-                .Include(c => c.CharAgendas).ThenInclude(ca => ca.Agenda)
-                .Include(c => c.CharAgendas).ThenInclude(ca => ca.AgendaAbility)
-                .Include(c => c.CharBlasphemies).ThenInclude(cb => cb.Blasphemy)
-                .Include(c => c.CharBlasphemies).ThenInclude(cb => cb.BlasphemyAbility)
+                .Include(c => c.Blasphemies)
+                .Include(c => c.Agendas)
                 .Include(c => c.CharacterSkills)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
         public async Task<List<CharacterDto>> GetCharactersByUserIdAsync(Guid userId) =>
             (await _context.Characters
                 .Where(c => c.UserId == userId)
-                .Include(c => c.CharBlasphemies).ThenInclude(cb => cb.Blasphemy)
-                .Include(c => c.CharAgendas).ThenInclude(ca => ca.Agenda)
+                .Include(c => c.Blasphemies)
+                .Include(c => c.Agendas)
                 .ToListAsync())
             .Select(c => new CharacterDto
             {
@@ -67,9 +63,8 @@ namespace Projeto4pServer.Services
                 KitPoints = c.KitPoints,
                 Burst = c.Burst,
                 SinOverflow = c.SinOverflow,
-                Marks = c.Marks,
-                CharBlasphemies = c.CharBlasphemies.Select(cb => new CharBlasphemyDto { Blasphemy = new BlasphemyDto { Name = cb.Blasphemy?.BlasphemyName } }).ToList(),
-                CharAgendas = c.CharAgendas.Select(ca => new CharAgendaDto { Agenda = new AgendaDto { Name = ca.Agenda?.AgendaName } }).ToList()
+                Marks = c.Marks
+                // Adapte para incluir Blasphemies e Agendas se necessário no DTO
             }).ToList();
 
         public async Task<Character> CreateCharacterAsync(Guid userId, CreateCharacterDto characterDto, IFormFile? Imagem = null)

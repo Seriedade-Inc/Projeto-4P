@@ -12,8 +12,8 @@ using Projeto4pServer.Data;
 namespace Projeto4pServer.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250619183427_AlterationBlasphemy")]
-    partial class AlterationBlasphemy
+    [Migration("20250624215532_AlteradoBlasphemyAndAgenda")]
+    partial class AlteradoBlasphemyAndAgenda
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,47 +37,18 @@ namespace Projeto4pServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("BoldItem")
+                    b.Property<string>("AgendaText")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("NormalItem")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("SpecialRule")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("CharacterId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
 
                     b.ToTable("Agendas");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AbilityName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("AgendaId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgendaId");
-
-                    b.ToTable("AgendaAbilities");
                 });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Blasphemy", b =>
@@ -92,99 +63,18 @@ namespace Projeto4pServer.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Fact")
+                    b.Property<string>("BlasphemyText")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Passive")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("CharacterId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
 
                     b.ToTable("Blasphemies");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.BlasphemyAbilities", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("AbilityName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("BlasphemyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlasphemyId");
-
-                    b.ToTable("BlasphemyAbilities");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharAgenda", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AgendaAbilityId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AgendaId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CharacterId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AgendaAbilityId");
-
-                    b.HasIndex("AgendaId");
-
-                    b.HasIndex("CharacterId");
-
-                    b.ToTable("CharAgendas");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharBlasphemy", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("BlasphemyAbilityId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BlasphemyId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CharacterId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlasphemyAbilityId");
-
-                    b.HasIndex("BlasphemyId");
-
-                    b.HasIndex("CharacterId");
-
-                    b.ToTable("CharBlasphemies");
                 });
 
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
@@ -224,6 +114,10 @@ namespace Projeto4pServer.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Height")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Imagem")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -340,107 +234,24 @@ namespace Projeto4pServer.Migrations
                     b.ToTable("Inventories");
                 });
 
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.User", b =>
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ResetCode")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ResetCodeExpiration")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.AgendaAbilities", b =>
-                {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Agenda", "Agenda")
-                        .WithMany("Abilities")
-                        .HasForeignKey("AgendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Agenda");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.BlasphemyAbilities", b =>
-                {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Blasphemy", "Blasphemy")
-                        .WithMany("BlasphemyAbilities")
-                        .HasForeignKey("BlasphemyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Blasphemy");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharAgenda", b =>
-                {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.AgendaAbilities", "AgendaAbility")
-                        .WithMany()
-                        .HasForeignKey("AgendaAbilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Agenda", "Agenda")
-                        .WithMany()
-                        .HasForeignKey("AgendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Projeto4pSharedLibrary.Classes.Character", "Character")
-                        .WithMany("CharAgendas")
+                        .WithMany("Agendas")
                         .HasForeignKey("CharacterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Agenda");
-
-                    b.Navigation("AgendaAbility");
 
                     b.Navigation("Character");
                 });
 
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.CharBlasphemy", b =>
+            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Blasphemy", b =>
                 {
-                    b.HasOne("Projeto4pSharedLibrary.Classes.BlasphemyAbilities", "BlasphemyAbility")
-                        .WithMany()
-                        .HasForeignKey("BlasphemyAbilityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Projeto4pSharedLibrary.Classes.Blasphemy", "Blasphemy")
-                        .WithMany()
-                        .HasForeignKey("BlasphemyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Projeto4pSharedLibrary.Classes.Character", "Character")
-                        .WithMany("CharBlasphemies")
+                        .WithMany("Blasphemies")
                         .HasForeignKey("CharacterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Blasphemy");
-
-                    b.Navigation("BlasphemyAbility");
 
                     b.Navigation("Character");
                 });
@@ -476,21 +287,11 @@ namespace Projeto4pServer.Migrations
                     b.Navigation("Character");
                 });
 
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Agenda", b =>
-                {
-                    b.Navigation("Abilities");
-                });
-
-            modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Blasphemy", b =>
-                {
-                    b.Navigation("BlasphemyAbilities");
-                });
-
             modelBuilder.Entity("Projeto4pSharedLibrary.Classes.Character", b =>
                 {
-                    b.Navigation("CharAgendas");
+                    b.Navigation("Agendas");
 
-                    b.Navigation("CharBlasphemies");
+                    b.Navigation("Blasphemies");
 
                     b.Navigation("CharacterSkills");
 

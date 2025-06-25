@@ -17,32 +17,29 @@ namespace Projeto4pServer.Services
         public async Task<List<Agenda>> GetAllAgendasAsync()
         {
             return await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
                 .ToListAsync();
         }
 
         public async Task<Agenda?> GetAgendaByIdAsync(long id)
         {
             return await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
                 .FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task<Agenda> CreateAgendaAsync(AgendaDto agendaDto)
         {
             if (string.IsNullOrWhiteSpace(agendaDto.AgendaName) ||
-                string.IsNullOrWhiteSpace(agendaDto.NormalItem) ||
-                string.IsNullOrWhiteSpace(agendaDto.BoldItem))
+                string.IsNullOrWhiteSpace(agendaDto.AgendaText) ||
+                agendaDto.CharacterId <= 0)
             {
-                throw new ArgumentException("All fields except 'SpecialRule' must be filled.");
+                throw new ArgumentException("Todos os campos precisam ser preenchidos e o personagem tem que ser válido.");
             }
 
             var agenda = new Agenda
             {
+                CharacterId = agendaDto.CharacterId,
                 AgendaName = agendaDto.AgendaName,
-                NormalItem = agendaDto.NormalItem,
-                BoldItem = agendaDto.BoldItem,
-                SpecialRule = agendaDto.SpecialRule
+                AgendaText = agendaDto.AgendaText
             };
 
             _context.Set<Agenda>().Add(agenda);
@@ -54,7 +51,6 @@ namespace Projeto4pServer.Services
         public async Task UpdateAgendaAsync(long id, AgendaDto agendaDto)
         {
             var existingAgenda = await _context.Set<Agenda>()
-                .Include(a => a.Abilities)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
             if (existingAgenda == null)
@@ -62,10 +58,9 @@ namespace Projeto4pServer.Services
                 throw new KeyNotFoundException("Agenda not found.");
             }
 
+            existingAgenda.CharacterId = agendaDto.CharacterId;
             existingAgenda.AgendaName = agendaDto.AgendaName;
-            existingAgenda.NormalItem = agendaDto.NormalItem;
-            existingAgenda.BoldItem = agendaDto.BoldItem;
-            existingAgenda.SpecialRule = agendaDto.SpecialRule;
+            existingAgenda.AgendaText = agendaDto.AgendaText;
 
             _context.Entry(existingAgenda).State = EntityState.Modified;
             await _context.SaveChangesAsync();

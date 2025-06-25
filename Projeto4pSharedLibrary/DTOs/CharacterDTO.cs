@@ -68,8 +68,8 @@ public class CharacterDto
     public int KitPoints { get; set; }
     public List<InventoryDto> Inventories { get; set; } = new List<InventoryDto>();
     public CharacterSkillsDto? CharacterSkills { get; set; }
-    public List<CharAgendaDto>? CharAgendas { get; set; }
-    public List<CharBlasphemyDto>? CharBlasphemies { get; set; }
+    public List<AgendaDto>? Agendas { get; set; }
+    public List<BlasphemyDto>? Blasphemies { get; set; }
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
     public int Marks { get; set; } 

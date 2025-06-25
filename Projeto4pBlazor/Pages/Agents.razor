@@ -22,14 +22,6 @@
                     <h2 class="text-xl font-bold text-purple-400">@character.Name</h2>
                     <p><strong>Id do Usuário:</strong> @character.UserId</p>
                     <p><strong>Age:</strong> @character.CAT</p>
-                    @if (character.CharBlasphemies != null && character.CharBlasphemies.Any() && character.CharBlasphemies.First().Blasphemy != null)
-                    {
-                        <p><strong>Blasphemy:</strong> @character.CharBlasphemies.First().Blasphemy.Name</p>
-                    }
-                    @if (character.CharAgendas != null && character.CharAgendas.Any() && character.CharAgendas.First().Agenda != null)
-                    {
-                        <p><strong>Agenda:</strong> @character.CharAgendas.First().Agenda.Name</p>
-                    }
                 </div>
             }
         }

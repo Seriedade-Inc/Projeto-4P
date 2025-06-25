@@ -9,8 +9,6 @@ namespace Projeto4pSharedLibrary.Classes
         public string Imagem { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string CharacterXID { get; set; } = string.Empty;
-        // public string Agenda { get; set; } = string.Empty;
-        // public string Blasfemia { get; set; } = string.Empty;
         public string Gender { get; set; } = string.Empty;
         public string Height { get; set; } = string.Empty;
         public string Weight { get; set; } = string.Empty;
@@ -24,8 +22,8 @@ namespace Projeto4pSharedLibrary.Classes
         public int Advance { get; set; }
         public int KitPoints { get; set; }
         public List<Inventory> Inventories { get; set; } = new List<Inventory>();
-        public List<CharBlasphemy> CharBlasphemies { get; set; } = new List<CharBlasphemy>();
-        public List<CharAgenda> CharAgendas { get; set; } = new List<CharAgenda>();
+        public List<Blasphemy> Blasphemies { get; set; } = new List<Blasphemy>();
+        public List<Agenda> Agendas { get; set; } = new List<Agenda>();
         public CharacterSkills? CharacterSkills { get; set; }
         public int Burst { get; set; }
         public int SinOverflow { get; set;}

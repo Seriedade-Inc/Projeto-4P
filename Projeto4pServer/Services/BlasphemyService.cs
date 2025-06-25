@@ -17,14 +17,12 @@ namespace Projeto4pServer.Services
         public async Task<List<Blasphemy>> GetAllBlasphemiesAsync()
         {
             return await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
                 .ToListAsync();
         }
 
         public async Task<Blasphemy?> GetBlasphemyByIdAsync(long id)
         {
             return await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
                 .FirstOrDefaultAsync(b => b.Id == id);
         }
 
@@ -32,9 +30,9 @@ namespace Projeto4pServer.Services
         {
             var blasphemy = new Blasphemy
             {
+                CharacterId = blasphemyDto.CharacterId,
                 BlasphemyName = blasphemyDto.BlasphemyName,
-                Fact = blasphemyDto.Fact,
-                Passive = blasphemyDto.Passive
+                BlasphemyText = blasphemyDto.BlasphemyText
             };
 
             _context.Set<Blasphemy>().Add(blasphemy);
@@ -46,7 +44,6 @@ namespace Projeto4pServer.Services
         public async Task UpdateBlasphemyAsync(long id, BlasphemyDto blasphemyDto)
         {
             var existingBlasphemy = await _context.Set<Blasphemy>()
-                .Include(b => b.BlasphemyAbilities)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (existingBlasphemy == null)
@@ -54,9 +51,9 @@ namespace Projeto4pServer.Services
                 throw new KeyNotFoundException("Blasphemy not found.");
             }
 
+            existingBlasphemy.CharacterId = blasphemyDto.CharacterId;
             existingBlasphemy.BlasphemyName = blasphemyDto.BlasphemyName;
-            existingBlasphemy.Fact = blasphemyDto.Fact;
-            existingBlasphemy.Passive = blasphemyDto.Passive;
+            existingBlasphemy.BlasphemyText = blasphemyDto.BlasphemyText;
 
             _context.Entry(existingBlasphemy).State = EntityState.Modified;
             await _context.SaveChangesAsync();

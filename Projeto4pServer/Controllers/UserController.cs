@@ -22,83 +22,95 @@ namespace Projeto4pServer.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserRegisterDto userDto)
         {
-            var result = await _userService.RegisterUserAsync(userDto);
-
-            if (result == "Email já está em uso." || result == "Este nome já está em uso.")
-                return Conflict(new { message = result });
-
-            return Ok(new { message = result });
+             try
+            {
+                var result = await _userService.RegisterUserAsync(userDto);
+                if (result == "Email já está em uso." || result == "Este nome já está em uso.")
+                    return Conflict(new { message = result });
+                if (result != "Usuário registrado com sucesso!")
+                    return StatusCode(500, new { message = result });
+                return Ok(new { message = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userDto)
         {
-            var user = await _userService.LoginUserAsync(userDto);
-
-            if (user == null)
-                return Unauthorized("Credenciais incorretas, tente novamente.");
-
-            // claims pro login (segurança httponly)
-            var claims = new List<Claim>
+            try
             {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, user.UserName),
-                new(ClaimTypes.Email, user.Email)
-            };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // Sign in and issue cookie
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                new AuthenticationProperties
+                var user = await _userService.LoginUserAsync(userDto);
+                if (user == null)
+                    return Unauthorized("Credenciais incorretas, tente novamente.");
+                var claims = new List<Claim>
                 {
-                    IsPersistent = true, // persistent cookie
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14)
-                });
-
-            // Return user info (optional)
-            return Ok(new { user.Id, user.UserName, user.Email });
+                    new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new(ClaimTypes.Name, user.UserName),
+                    new(ClaimTypes.Email, user.Email)
+                };
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14) });
+                return Ok(new { user.Id, user.UserName, user.Email });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> GetUsers(string? username = null)
         {
-            var users = await _userService.GetUsersAsync(username);
-
-            if (users.Count == 0)
-                return NotFound($"Nenhum usuário encontrado com o termo: '{username}'.");
-
-            return Ok(users);
+            try
+            {
+                var users = await _userService.GetUsersAsync(username);
+                if (users.Count == 0)
+                    return NotFound($"Nenhum usuário encontrado com o termo: '{username}'");
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
+            }
         }
 
         [HttpGet("check-auth")]
         public IActionResult CheckAuth()
         {
-            if (_userService.IsUserAuthenticated(out var userName))
+            try
             {
-                return Ok(new { authenticated = true, user = userName });
+                if (_userService.IsUserAuthenticated(out var userName))
+                    return Ok(new { authenticated = true, user = userName });
+                return Unauthorized(new { authenticated = false });
             }
-
-            return Unauthorized(new { authenticated = false });
-        }
-
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Ok();
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
+            }
         }
 
         [HttpDelete("delete/{email}")]
         public async Task<IActionResult> DeleteUser(string email)
         {
-            var result = await _userService.DeleteUserAsync(email);
-
-            if (result == "Usuário não encontrado.")
-                return NotFound(result);
-
-            return Ok(new { message = result });
+            try
+            {
+                var result = await _userService.DeleteUserAsync(email);
+                if (result == "Usuário não encontrado.")
+                    return NotFound(result);
+                if (!result.Contains("deletado com sucesso"))
+                    return StatusCode(500, new { message = result });
+                return Ok(new { message = result });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
+            }
         }
     }
 }

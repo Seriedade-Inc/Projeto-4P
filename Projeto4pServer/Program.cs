@@ -4,20 +4,20 @@ using Scalar.AspNetCore;
 using Projeto4pServer.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Projeto4pSharedLibrary.Services;
+using Projeto4pServer.Repository;
+// Add the correct namespace for UserRepository below if it's in a different namespace
+// Example:
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserRepository , UserRepository>();
 builder.Services.AddScoped<AgendaService>();
-builder.Services.AddScoped<AgendaAbilitiesService>();
 builder.Services.AddScoped<BlasphemyService>();
-builder.Services.AddScoped<BlasphemyAbilitiesService>();
 builder.Services.AddScoped<CharacterService>();
 builder.Services.AddScoped<CharacterSkillsService>();
-builder.Services.AddScoped<CharAgendaService>();
-builder.Services.AddScoped<CharBlasphemyService>();
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddHttpContextAccessor();
 BuilderService buildingService = new();
@@ -55,8 +55,6 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-
-
 
 var app = builder.Build();
 
