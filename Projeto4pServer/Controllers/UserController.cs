@@ -47,6 +47,7 @@ namespace Projeto4pServer.Controllers
                     return Unauthorized("Credenciais incorretas, tente novamente.");
                 var claims = new List<Claim>
                 {
+<<<<<<< HEAD
                     new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new(ClaimTypes.Name, user.UserName),
                     new(ClaimTypes.Email, user.Email)
@@ -62,6 +63,19 @@ namespace Projeto4pServer.Controllers
             {
                 return StatusCode(500, new { message = "Erro interno no servidor.", detail = ex.Message });
             }
+=======
+                    IsPersistent = true, // persistent cookie
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14)
+                });
+
+            // Return user info (optional)
+            return Ok(new LoginResponse
+    {
+                UserId = user.Id, // Aqui deve ser o Guid real do usuário!
+                UserName = user.UserName,
+                Email = user.Email
+    });
+>>>>>>> c08d29e98bebfc784326199ec95cbe63bdf5e4c5
         }
 
         [HttpGet]
