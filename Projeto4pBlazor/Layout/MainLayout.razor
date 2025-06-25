@@ -93,35 +93,14 @@
     private bool isLoginPopupVisible = false;
     private bool isRegistering = false;
     private bool isLogoutConfirmationVisible = false;
-<<<<<<< HEAD
     private bool isLoggedIn = false; // Indica se o usuário está logado
     private string username = string.Empty; // Para registro e exibição
     public string AtualUserName { get; set; } = string.Empty; // Nome de usuário atual
-
-    private bool isLoggedIn = false; // Indica se o usuário está logado
-    
     private string loginInput = string.Empty; // Novo campo para login (username ou email)
-    private bool isLoggedIn = false;
-    private string username = string.Empty;
-    public string AtualUserName { get; set; } = string.Empty;
-=======
-
-    private bool isLoggedIn = false; // Indica se o usuário está logado
-    private string username = string.Empty; // Para registro e exibição
-
-    public string AtualUserName { get; set; } = string.Empty; // Nome de usuário atual
-
-    private string loginInput = string.Empty; // Novo campo para login (username ou email)
-
-
->>>>>>> c08d29e98bebfc784326199ec95cbe63bdf5e4c5
     private string email = string.Empty; 
-
     private string password = string.Empty;
     private string errorMessage = string.Empty;
-    
     private Guid? userId = null;
-
     private async Task HandleRegister()
     {
         try
@@ -213,12 +192,10 @@
         UserSession.UserId = null; // Limpa o ID do usuário na sessão
         NavigationManager.NavigateTo("/");
     }
-
     private void ShowLogoutConfirmation()
     {
         isLogoutConfirmationVisible = true;
     }
-
     private void CancelLogout()
     {
         isLogoutConfirmationVisible = false;
