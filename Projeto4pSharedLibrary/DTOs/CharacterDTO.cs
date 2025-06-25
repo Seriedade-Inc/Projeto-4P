@@ -16,8 +16,8 @@ public class CreateCharacterDto
     public int Stress { get; set; } 
     public int Injury { get; set; }
     public int XP { get; set; } 
-    public int Advance { get; set; } 
-    public int KitPoints { get; set; } 
+    public int Advance { get; set; }
+    public int KitPoints { get; set; } = 5;
     public int Burst { get; set; }
     public int SinOverflow { get; set; }
     public int Marks { get; set; }

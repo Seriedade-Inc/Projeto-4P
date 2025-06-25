@@ -47,14 +47,8 @@ namespace Projeto4pServer.Controllers
             return Ok(characters);
         }
 
-<<<<<<< HEAD
         [HttpPost("create/{userId:guid}")] // userId na rota para criação
         public async Task<IActionResult> CreateCharacter(Guid userId, [FromForm] CreateCharacterDto characterDto, IFormFile? Imagem = null)
-=======
-        // POST: api/User/Character/create
-        [HttpPost("create/{userId}")]
-        public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto, IFormFile? Imagem = null)
->>>>>>> c08d29e98bebfc784326199ec95cbe63bdf5e4c5
         {
             try
             {
