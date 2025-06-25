@@ -8,8 +8,6 @@ namespace Projeto4pSharedLibrary.Classes
         public long CharacterId { get; set; } // Chave estrangeira para Character
         public string ItemName { get; set; } = string.Empty; // Nome do item
         public string? ItemDescription { get; set; } = string.Empty; // Descrição do item
-        public int Quantity { get; set; } // Quantidade do item
-
         // Relacionamento com Character
         [JsonIgnore]
         public Character? Character { get; set; }

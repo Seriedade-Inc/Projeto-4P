@@ -21,7 +21,7 @@ namespace Projeto4pServer.Repository
         public UserRepository(AppDbContext context) { _context = context; }
 
         public async Task<bool> EmailExistsAsync(string email) =>
-            await _context.User.AnyAsync(u => u.Email == email);
+            await _context.User.AnyAsync(u => u.Email.ToLower() == email.ToLower());
 
         public async Task<bool> UsernameExistsAsync(string username) =>
             await _context.User.AnyAsync(u => u.UserName.ToLower() == username.ToLower());

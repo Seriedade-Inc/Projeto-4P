@@ -2,28 +2,27 @@ using Microsoft.EntityFrameworkCore;
 using Projeto4pServer.Data;
 using Projeto4pServer.DTOs;
 using Projeto4pSharedLibrary.Classes;
+using Projeto4pServer.Repository;
 
 namespace Projeto4pServer.Services
 {
     public class BlasphemyService : DeleteService<Blasphemy>
     {
-        private readonly AppDbContext _context;
+        private readonly IBlasphemyRepository _repository;
 
-        public BlasphemyService(AppDbContext context) : base(context)
+        public BlasphemyService(IBlasphemyRepository repository, AppDbContext context) : base(context)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task<List<Blasphemy>> GetAllBlasphemiesAsync()
         {
-            return await _context.Set<Blasphemy>()
-                .ToListAsync();
+            return await _repository.GetAllAsync();
         }
 
         public async Task<Blasphemy?> GetBlasphemyByIdAsync(long id)
         {
-            return await _context.Set<Blasphemy>()
-                .FirstOrDefaultAsync(b => b.Id == id);
+            return await _repository.GetByIdAsync(id);
         }
 
         public async Task<Blasphemy> CreateBlasphemyAsync(BlasphemyDto blasphemyDto)
@@ -35,16 +34,12 @@ namespace Projeto4pServer.Services
                 BlasphemyText = blasphemyDto.BlasphemyText
             };
 
-            _context.Set<Blasphemy>().Add(blasphemy);
-            await _context.SaveChangesAsync();
-
-            return blasphemy;
+            return await _repository.CreateAsync(blasphemy);
         }
 
         public async Task UpdateBlasphemyAsync(long id, BlasphemyDto blasphemyDto)
         {
-            var existingBlasphemy = await _context.Set<Blasphemy>()
-                .FirstOrDefaultAsync(b => b.Id == id);
+            var existingBlasphemy = await _repository.GetByIdAsync(id);
 
             if (existingBlasphemy == null)
             {
@@ -55,8 +50,19 @@ namespace Projeto4pServer.Services
             existingBlasphemy.BlasphemyName = blasphemyDto.BlasphemyName;
             existingBlasphemy.BlasphemyText = blasphemyDto.BlasphemyText;
 
-            _context.Entry(existingBlasphemy).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _repository.UpdateAsync(existingBlasphemy);
         }
+
+        // Antes da refatoração (dentro de BlasphemyService):
+        // public async Task DeleteBlasphemyAsync(long id)
+        // {
+        //     var blasphemyToDelete = await _context.Set<Blasphemy>().FindAsync(id);
+        //     if (blasphemyToDelete != null)
+        //     {
+        //         _context.Set<Blasphemy>().Remove(blasphemyToDelete);
+        //         await _context.SaveChangesAsync();
+        //     }
+        // }
+        // Como o delete era genérico, agora usamos a classe base DeleteService:
     }
 }
