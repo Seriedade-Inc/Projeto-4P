@@ -10,7 +10,8 @@
             //:TEMERITY
         </NavLink>
     </div>
-    <div>
+    <div class="flex items-center">
+        <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ShowDiceModal">Roll Dice</button>
         @if (isLoggedIn)
         {
             <button class="ring-2 text-white rounded px-5 py-2 mr-2 text-bold cain-button" @onclick="ShowLogoutConfirmation">Welcome, @AtualUserName!</button>
@@ -89,6 +90,86 @@
     </div>
 }
 
+@if (isDiceModalVisible)
+{
+    <div class="fixed inset-0 flex bg-opacity-50 backdrop-blur-md items-center justify-center z-50">
+        <div class="bg-neutral-900 p-6 rounded shadow-lg min-w-[300px]">
+            <h2 class="text-lg text-gray-50 font-bold mb-4">Roll your Dice</h2>
+            <div class="mb-4 flex items-end gap-4">
+                <div>
+                    <label class="block text-white mb-1">Modifier</label>
+                    <input type="number" class="w-24 border rounded text-white bg-neutral-800 px-2 py-1" style="width: 80px;" @bind="diceModifier" />
+                </div>
+                <div class="flex flex-col items-center">
+                    <label class="text-white text-xs mb-1">&nbsp;</label>
+                    <button type="button"
+                        class="adv-btn @(hasAdvantage ? "active ring-2 ring-purple-400" : "")"
+                        @onclick="ToggleAdvantage">
+                        Advantage
+                    </button>
+                </div>
+                <div class="flex flex-col items-center">
+                    <label class="text-white text-xs mb-1">&nbsp;</label>
+                    <button type="button"
+                        class="dis-btn @(hasDisadvantage ? "active ring-2 ring-purple-400" : "")"
+                        @onclick="ToggleDisadvantage">
+                        Disadvantage
+                    </button>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 2 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(2)">d2</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 4 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(4)">d4</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 6 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(6)">d6</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 8 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(8)">d8</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 10 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(10)">d10</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 20 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(20)">d20</button>
+                <button class="bg-indigo-950 hover:bg-indigo-900 text-white px-4 py-2 rounded dice-btn @(clickedDice == 100 ? "dice-clicked" : "")" @onclick="() => DiceButtonClick(100)">d100</button>
+            </div>
+            @if (diceResult != null)
+            {
+                <div class="text-white mb-2">
+                    @if (hasAdvantage && lastRoll1 != null && lastRoll2 != null)
+                    {
+                        <span>
+                            Rolls: 
+                            <span class="@(lastRoll1 >= lastRoll2 ? "font-bold" : "text-gray-400")">@lastRoll1</span>
+                            /
+                            <span class="@(lastRoll2 > lastRoll1 ? "font-bold" : "text-gray-400")">@lastRoll2</span>
+                        </span>
+                    }
+                    else if (hasDisadvantage && lastRoll1 != null && lastRoll2 != null)
+                    {
+                        <span>
+                            Rolls: 
+                            <span class="@(lastRoll1 <= lastRoll2 ? "font-bold" : "text-gray-400")">@lastRoll1</span>
+                            /
+                            <span class="@(lastRoll2 < lastRoll1 ? "font-bold" : "text-gray-400")">@lastRoll2</span>
+                        </span>
+                    }
+                    <br />
+                    Result: <span class="font-bold">@diceResult</span>
+                    @if (diceModifier != 0)
+                    {
+                        <span class="ml-2 text-gray-300">(with modifier: <span class="font-bold">@((diceResult ?? 0) + diceModifier)</span>)</span>
+                    }
+                    @if (hasAdvantage)
+                    {
+                        <span class="ml-2 text-green-400 text-xs">(Advantage)</span>
+                    }
+                    @if (hasDisadvantage)
+                    {
+                        <span class="ml-2 text-red-400 text-xs">(Disadvantage)</span>
+                    }
+                </div>
+            }
+            <div class="flex justify-end">
+                <button class="bg-red-950 hover:bg-red-900 text-white px-4 py-2 rounded" @onclick="HideDiceModal">Close</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code {
     private bool isLoginPopupVisible = false;
     private bool isRegistering = false;
@@ -101,6 +182,65 @@
     private string password = string.Empty;
     private string errorMessage = string.Empty;
     private Guid? userId = null;
+    // Dice modal state
+    private bool isDiceModalVisible = false;
+    private int? diceResult = null;
+    private static readonly Random rng = new();
+    private int? clickedDice = null;
+    private int diceModifier = 0;
+    private bool hasAdvantage = false;
+    private bool hasDisadvantage = false;
+    private int? lastRoll1 = null;
+    private int? lastRoll2 = null;
+
+    private void ToggleAdvantage()
+    {
+        if (!hasAdvantage)
+        {
+            hasAdvantage = true;
+            hasDisadvantage = false;
+        }
+        else
+        {
+            hasAdvantage = false;
+        }
+    }
+
+    private void ToggleDisadvantage()
+    {
+        if (!hasDisadvantage)
+        {
+            hasDisadvantage = true;
+            hasAdvantage = false;
+        }
+        else
+        {
+            hasDisadvantage = false;
+        }
+    }
+
+    private bool HasAdvantage
+    {
+        get => hasAdvantage;
+        set
+        {
+            if (value)
+                hasDisadvantage = false;
+            hasAdvantage = value;
+        }
+    }
+
+    private bool HasDisadvantage
+    {
+        get => hasDisadvantage;
+        set
+        {
+            if (value)
+                hasAdvantage = false;
+            hasDisadvantage = value;
+        }
+    }
+
     private async Task HandleRegister()
     {
         try
@@ -199,5 +339,53 @@
     private void CancelLogout()
     {
         isLogoutConfirmationVisible = false;
+    }
+
+    private void ShowDiceModal()
+    {
+        isDiceModalVisible = true;
+        diceResult = null;
+        lastRoll1 = null;
+        lastRoll2 = null;
+    }
+
+    private void HideDiceModal()
+    {
+        isDiceModalVisible = false;
+        diceResult = null;
+        lastRoll1 = null;
+        lastRoll2 = null;
+    }
+
+    private void RollDice(int sides)
+    {
+        if (hasAdvantage)
+        {
+            lastRoll1 = rng.Next(1, sides + 1);
+            lastRoll2 = rng.Next(1, sides + 1);
+            diceResult = Math.Max(lastRoll1.Value, lastRoll2.Value);
+        }
+        else if (hasDisadvantage)
+        {
+            lastRoll1 = rng.Next(1, sides + 1);
+            lastRoll2 = rng.Next(1, sides + 1);
+            diceResult = Math.Min(lastRoll1.Value, lastRoll2.Value);
+        }
+        else
+        {
+            diceResult = rng.Next(1, sides + 1);
+            lastRoll1 = null;
+            lastRoll2 = null;
+        }
+    }
+
+    private async void DiceButtonClick(int sides)
+    {
+        clickedDice = sides;
+        RollDice(sides);
+        StateHasChanged();
+        await Task.Delay(120);
+        clickedDice = null;
+        StateHasChanged();
     }
 }
