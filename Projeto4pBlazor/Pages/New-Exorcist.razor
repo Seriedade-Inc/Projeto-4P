@@ -41,12 +41,12 @@
     <div class="flex gap-4">
       <div class="flex-1">
         <label for="agenda" class="block text-sm">Agendas</label>
-        <input id="agenda" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+        <input id="agenda" type="text" @bind="agendaName" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
       </div>
     
     <div class="flex-1">
         <label for="blasphemy" class="block text-sm">Blasphemies</label>
-        <input id="blasphemy" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+        <input id="blasphemy" type="text" @bind="blasphemyName" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
        </div>
     </div>
     
@@ -107,9 +107,10 @@
 
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Agenda Text</h2>
-      <textarea
-        class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
-        placeholder="Escreva aqui..."></textarea>
+        <textarea
+          class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
+          placeholder="Escreva aqui..."
+          @bind="agendaText"></textarea>
     </div> 
     
 
@@ -336,8 +337,9 @@
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Blasphemy Text</h2>
       <textarea
-        class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
-        placeholder="Escreva aqui..."></textarea>
+          class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll"
+          placeholder="Escreva aqui..."
+          @bind="blasphemyText"></textarea>
     </div>
 
 
@@ -350,33 +352,76 @@
 </EditForm>
 
 @code {
-      private CreateCharacterDto character = new();
-      // private Guid userId = UserSession.UserId;
+    private CreateCharacterDto character = new();
+    private string blasphemyText = string.Empty;
+    private string blasphemyName = string.Empty;
+    private string agendaName = string.Empty;
+    private string agendaText = string.Empty;
 
-      private async Task RegisterExorcist()
-  {
-      // Verifique se o UserId está definido
+
+    private async Task RegisterExorcist()
+    {
         if (UserSession.UserId == null)
         {
-            // Exiba mensagem ou redirecione para login
             Console.WriteLine("Usuário não identificado.");
             return;
         }
 
-      var response = await Http.PostAsJsonAsync(
-          $"api/User/Character/create/{UserSession.UserId}", character
-
-
-      );
+        var response = await Http.PostAsJsonAsync(
+            $"api/User/Character/create/{UserSession.UserId}", character
+        );
 
         if (response.IsSuccessStatusCode)
         {
-            Console.WriteLine("Registrado com sucesso!");
+            // Pegue o personagem criado (com Id)
+            var createdCharacter = await response.Content.ReadFromJsonAsync<CharacterDto>();
+            // ...existing code...
+            if (createdCharacter != null)
+            {
+                // LOG: Veja o valor retornado do personagem criado
+                Console.WriteLine($"createdCharacter.Id: {createdCharacter.Id}");
+
+                // Monte o DTO de Blasphemy
+                var blasphemyDto = new BlasphemyDto
+                {
+                    CharacterId = createdCharacter.Id,
+                    BlasphemyName = blasphemyName,
+                    BlasphemyText = blasphemyText
+                };
+
+                var blasphemyResponse = await Http.PostAsJsonAsync("api/Blasphemy", blasphemyDto);
+
+                if (blasphemyResponse.IsSuccessStatusCode)
+                    Console.WriteLine("Blasphemy registrada!");
+                else
+                    Console.WriteLine("Erro ao registrar Blasphemy.");
+
+                // Monte o DTO de Agenda
+                var agendaDto = new AgendaDto
+                {
+                    CharacterId = createdCharacter.Id,
+                    AgendaName = agendaName,
+                    AgendaText = agendaText
+                };
+
+                // LOG: Veja o conteúdo do DTO de Agenda antes de enviar
+                Console.WriteLine($"AgendaDto: CharacterId={agendaDto.CharacterId}, AgendaName={agendaDto.AgendaName}, AgendaText={agendaDto.AgendaText}");
+
+                var agendaResponse = await Http.PostAsJsonAsync("api/Agenda", agendaDto);
+
+                if (agendaResponse.IsSuccessStatusCode)
+                    Console.WriteLine("Agenda registrada!");
+                else
+                {
+                    var errorMsg = await agendaResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine("Erro ao registrar Agenda: " + errorMsg);
+                }
+            }
         }
         else
         {
             Console.WriteLine("Erro ao registrar.");
             Console.WriteLine($"{UserSession.UserId}");
         }
-  }
-  }
+    }
+}
