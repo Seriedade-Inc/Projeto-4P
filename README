@@ -6,22 +6,33 @@
 - Vitor Garcia / 06006002
 - Miguel Chaves / 06006125
 
+## Link do vídeo
+
+### [Vídeo]()
+
 ## 1. Organização em camadas
 
 - **Apresentação:** `Controllers/`
 - **Domínio:** `Services/`
 - **Infraestrutura:** `Repository/`, `Data/`
 - Exemplos:
-  - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs)
-  - [`Repository/UserRepository.cs`](Projeto4pServer/Repository/UserRepository.cs)
+  - [`Services`](Projeto4pServer/Services)
+  - [`Repository`](Projeto4pServer/Repository)
+  - [`Controllers`](Projeto4pServer/Controllers)
+  - [`Data`](Projeto4pServer/Data)
+  - [`Test`](Projeto4pServer.Tests)
 
 ---
 
 ## 2. Aplicação de padrões de projeto
 
-- **Repository Pattern:**
+- **Repository:**
   - [`Repository/InventoryRepository.cs`](Projeto4pServer/Repository/InventoryRepository.cs) (linhas 7-54)
+  - [`Repository/CharacterRepository.cs`](Projeto4pServer/Repository/CharacterRepository.cs)
   - Usado para abstrair o acesso a dados e facilitar testes.
+- **DTO:**
+  - [`DTOs/CharacterDto.cs`](Projeto4pSharedLibrary/DTOs/CharacterDTO.cs)
+  - [`DTOs/InventoryDto.cs`](Projeto4pSharedLibrary/DTOs/InventoryDTO.cs)
 
 ---
 
@@ -31,6 +42,12 @@
   - Cada service e repository tem responsabilidade única.
   - Exemplo:
     - [`Services/UserService.cs`](Projeto4pServer/Services/UserService.cs) (linhas 11-60)
+    - [`Services/CharacterSkillsService.cs`](Projeto4pServer/Services/CharacterSkillsService.cs)
+- **Open/Closed Principle:**
+  - [`Services/DeleteService.cs`](Projeto4pServer/Services/DeleteService.cs) permite extensão para qualquer entidade.
+- **Dependency Inversion Principle:**
+  - Controllers dependem de interfaces, não implementações concretas:
+    - [`Controllers/CharacterController.cs`](Projeto4pServer/Controllers/CharacterController.cs)
 
 ---
 
@@ -40,13 +57,16 @@
   - Exemplo: `UserRepository`, `InventoryService`, `DeleteService`
   - [`Repository/UserRepository.cs`](Projeto4pServer/Repository/UserRepository.cs)
   - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs)
+  - [`DTOs/AgendaDto.cs`](Projeto4pSharedLibrary/DTOs/AgendaDTO.cs)
+  - [`Classes/CharacterSkills.cs`](Projeto4pSharedLibrary/Classes/CharacterSkills.cs)
 
 ---
 
 ## 5. Documentação mínima de código
 
 - **Comentários objetivos em métodos complexos:**
-  - [`Services/CharacterService.cs`](Projeto4pServer/Services/CharacterService.cs) (linhas 173-200)
+  - [`Services/CharacterService.cs`](Projeto4pServer/Services/CharacterService.cs) (linhas 167-183)
+  - [`Controllers/CharacterController.cs`](Projeto4pServer/Controllers/CharacterController.cs) (linhas 61-82)
 
 ---
 
@@ -102,7 +122,14 @@ public class DeleteService<T> where T : class
 }
 ```
 
+- [`Projeto4pServer`](Projeto4pServer\Services\CharacterService.cs) (linhas 134 a 144)
+
+
 Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<T>` e usar `DeleteAsync(id)`.
+
+- **Outras refatorações:**
+  - Uso de DTOs para separar entidades de domínio e transporte.
+  - Extração de métodos auxiliares para validação em `CharacterSkillsService`.
 
 ---
 
@@ -110,6 +137,8 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 
 - **Uso de try/catch e respostas padronizadas:**
   - [`Controllers/CharacterController.cs`](Projeto4pServer/Controllers/CharacterController.cs) (linhas 68-80)
+  - [`Controllers/CharacterSkillsController.cs`](Projeto4pServer/Controllers/CharacterSkillsController.cs) (linhas 34-56)
+  - Validação de argumentos em `Services/CharacterSkillsService.cs` (linhas 41-60)
 
 ---
 
@@ -118,6 +147,9 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 - **Validação de parâmetros e proteção contra dados inválidos:**
   - [`Services/UserService.cs`](Projeto4pServer/Services/UserService.cs) (linhas 17-34)
   - [`Services/InventoryService.cs`](Projeto4pServer/Services/InventoryService.cs) (linhas 23-46)
+  - [`Services/CharacterSkillsService.cs`](Projeto4pServer/Services/CharacterSkillsService.cs) (linhas 41-60)
+  - [`Controllers/CharacterController.cs`](Projeto4pServer/Controllers/CharacterController.cs) (linhas 53-67)
+  - [`ViewExorcist`](Projeto4pBlazor\Pages\View-Exorcist.razor) (linhas 176-208)
 
 ---
 
@@ -125,8 +157,9 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 
 - **Consistência e feedback visual (CSS/Componentes):**
   - Exemplo: `wwwroot/css/site.css` (linhas 1-50)
-  - Pages/Sin-Registry.razor (linhas 4–5)
-
+  - `Pages/Sin-Registry.razor` (imagem centralizada)
+  - `Layout/MainLayout.razor` (botão de rolagem de dados com efeito visual)
+  - Validação visual de formulários em `Pages/Create-Character.razor`
 
 ---
 
