@@ -7,8 +7,8 @@ public class CreateCharacterDto
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
-    public string Heigth { get; set; } = string.Empty;
-    public string Weigth { get; set; } = string.Empty;
+    public string Height { get; set; } = string.Empty;
+    public string Weight { get; set; } = string.Empty;
     public string HairColor { get; set; } = string.Empty;
     public string EyeColor { get; set; } = string.Empty;
     public int CAT { get; set; }
@@ -30,8 +30,8 @@ public class UpdateCharacterDto
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
-    public string Heigth { get; set; } = string.Empty;
-    public string Weigth { get; set; } = string.Empty;
+    public string Height { get; set; } = string.Empty;
+    public string Weight { get; set; } = string.Empty;
     public string HairColor { get; set; } = string.Empty;
     public string EyeColor { get; set; } = string.Empty;
     public int CAT { get; set; }
@@ -55,8 +55,8 @@ public class CharacterDto
     public string Name { get; set; } = string.Empty;
     public string CharacterXID { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty;
-    public string Heigth { get; set; } = string.Empty;
-    public string Weigth { get; set; } = string.Empty;
+    public string Height  { get; set; } = string.Empty;
+    public string Weight { get; set; } = string.Empty;
     public string HairColor { get; set; } = string.Empty;
     public string EyeColor { get; set; } = string.Empty;
     public int CAT { get; set; }

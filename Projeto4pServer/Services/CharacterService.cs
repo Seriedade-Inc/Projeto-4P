@@ -38,8 +38,8 @@ namespace Projeto4pServer.Services
                 Name = c.Name,
                 CharacterXID = c.CharacterXID,
                 Gender = c.Gender,
-                Heigth = c.Height,
-                Weigth = c.Weight,
+                Height = c.Height,
+                Weight = c.Weight,
                 HairColor = c.HairColor,
                 EyeColor = c.EyeColor,
                 CAT = c.CAT,
@@ -73,8 +73,8 @@ namespace Projeto4pServer.Services
                 Name = characterDto.Name,
                 CharacterXID = characterDto.CharacterXID,
                 Gender = characterDto.Gender,
-                Height = characterDto.Heigth,
-                Weight = characterDto.Weigth,
+                Height = characterDto.Height,
+                Weight = characterDto.Weight,
                 HairColor = characterDto.HairColor,
                 EyeColor = characterDto.EyeColor,
                 CAT = characterDto.CAT,
@@ -115,8 +115,8 @@ namespace Projeto4pServer.Services
             character.Name = updatedCharacter.Name;
             character.CharacterXID = updatedCharacter.CharacterXID;
             character.Gender = updatedCharacter.Gender;
-            character.Height = updatedCharacter.Heigth;
-            character.Weight = updatedCharacter.Weigth;
+            character.Height = updatedCharacter.Height;
+            character.Weight = updatedCharacter.Weight;
             character.HairColor = updatedCharacter.HairColor;
             character.EyeColor = updatedCharacter.EyeColor;
             character.CAT = updatedCharacter.CAT;
