@@ -43,11 +43,11 @@ else
         <div class="flex gap-4">
           <div class="flex-1">
             <label class="block text-sm">Agendas</label>
-            <input value="@string.Join(", ", character.Agendas?.Select(a => a.Name) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+            <input value="@string.Join(", ", character.Agendas?.Select(a => a.AgendaName) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
           </div>
           <div class="flex-1">
             <label class="block text-sm">Blasphemies</label>
-            <input value="@string.Join(", ", character.Blasphemies?.Select(b => b.Name) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+            <input value="@string.Join(", ", character.Blasphemies?.Select(b => b.BlasphemyName) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
           </div>
         </div>
         <!-- Linha com Gender, Height e Weight -->
