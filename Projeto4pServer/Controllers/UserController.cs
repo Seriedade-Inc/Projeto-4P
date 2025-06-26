@@ -57,19 +57,11 @@ namespace Projeto4pServer.Controllers
                     new ClaimsPrincipal(claimsIdentity),
                     new AuthenticationProperties { IsPersistent = true, ExpiresUtc = DateTimeOffset.UtcNow.AddDays(14) });
                 return Ok(new LoginResponse
-<<<<<<< HEAD
                     {
                 UserId = user.Id, // Aqui deve ser o Guid real do usuário!
                 UserName = user.UserName,
                 Email = user.Email
                                  });
-=======
-                {
-                            UserId = user.Id, // Aqui deve ser o Guid real do usuário!
-                            UserName = user.UserName,
-                            Email = user.Email
-                });
->>>>>>> 8a797beee3a27579ea5ae3c76ba31990284090c8
             }
             catch (Exception ex)
             {

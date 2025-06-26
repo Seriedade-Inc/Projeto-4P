@@ -47,19 +47,13 @@ namespace Projeto4pServer.Controllers
             return Ok(characters);
         }
 
-<<<<<<< HEAD
         [HttpPost("create/{userId:guid}")] // userId na rota para criação
-        public async Task<IActionResult> CreateCharacter(Guid userId, [FromForm] CreateCharacterDto characterDto, IFormFile? Imagem = null)
-=======
-        // POST: api/User/Character/create
-        [HttpPost("create/{userId}")]
-        public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto, IFormFile? Imagem = null)
->>>>>>> 8a797beee3a27579ea5ae3c76ba31990284090c8
+        public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto)
         {
             try
             {
                 // O CharacterService agora aceita o IFormFile diretamente para processar a imagem
-                var character = await _service.CreateCharacterAsync(userId, characterDto, Imagem);
+                var character = await _service.CreateCharacterAsync(userId, characterDto);
                 
                 // Retorna 201 CreatedAtAction com o link para o novo recurso
                 return CreatedAtAction(nameof(GetCharacters), new { id = character.Id }, character);

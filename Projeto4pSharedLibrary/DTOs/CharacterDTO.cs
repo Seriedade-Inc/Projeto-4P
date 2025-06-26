@@ -19,7 +19,7 @@ public class CreateCharacterDto
     public int Advance { get; set; }
     public int KitPoints { get; set; } = 5;
     public int Burst { get; set; }
-    public int SinOverflow { get; set; }
+    public int SinOverflow { get; set; } = 0;
     public int Marks { get; set; }
 }
 

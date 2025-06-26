@@ -64,7 +64,7 @@
 
       <div class="flex-1">
         <label for="weight" class="block text-sm">Weight</label>
-        <input @bind="character.Weigth" id="weight" type="number" max="7" min="0" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+        <input @bind="character.Weigth" id="weight" type="number" min="0" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
       </div>
     </div>
 
@@ -72,7 +72,7 @@
     <div class="flex gap-4">
       <div class="flex-1">
         <label for="eyes" class="block text-sm">Eyes</label>
-        <input id="eyes" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
+        <input @bind="character.EyeColor" id="eyes" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" />
       </div>
     
     <div class="flex-1">
@@ -113,10 +113,111 @@
     </div> 
     
 
-    <div class="border border-white p-2">
-      <h2 class="font-bold text-purple-400">Exorcist Status</h2>
+<div class="border h-100 border-white p-4">
+    <h2 class="font-bold text-purple-400">Exorcist Status</h2>
 
-    </div> 
+    <!-- Usamos grid para melhor controle de layout -->
+    <div class="grid grid-cols-2 gap-x-16 gap-y-6 mt-4">
+        <!-- XP -->
+        <div>
+            <span class="block text-sm text-purple-500 mb-1">XP</span>
+            <div class="flex items-center gap-4 mt-2">
+                @for (int i = 0; i <= 4; i++)
+                {
+                    <label class="flex items-center gap-1">
+                        <input type="radio" name="xp" value="@i" checked="@(character.XP == i)" @onchange="() => character.XP = i" class="form-radio text-purple-500" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Advance -->
+        <div>
+            <span class="block text-sm text-purple-500 mb-1">Advance</span>
+            <div class="flex items-center gap-4 mt-2">
+                @for (int i = 0; i <= 3; i++)
+                {
+                    <label class="flex items-center gap-1">
+                        <input type="radio" name="advance" value="@i" checked="@(character.Advance == i)" @onchange="() => character.Advance = i" class="form-radio text-purple-500" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Burst -->
+        <div>
+            <span class="block text-sm text-purple-500 mb-1">Burst</span>
+            <div class="flex items-center gap-4 mt-2">
+                @for (int i = 0; i <= 3; i++)
+                {
+                    <label class="flex items-center gap-1">
+                        <input type="radio" name="burst" value="@i" checked="@(character.Burst == i)" @onchange="() => character.Burst = i" class="form-radio text-purple-500" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Stress (como x/6) -->
+        <div class="flex flex-col ml-6">
+            <span class="block text-sm text-purple-500 mb-1">Stress</span>
+            <div class="flex items-center gap-2">
+                <input type="number"
+                      min="0"
+                      max="6"
+                      @bind="character.Stress"
+                      class="w-14 rounded px-1 py-0.5 bg-black text-white border border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                <span class="text-purple-400 text-sm">/ 6</span>
+            </div>
+        </div>
+
+        <!-- Divine Agony -->
+        <div>
+            <span class="block text-sm text-purple-500 mb-1">Divine Agony</span>
+            <div class="flex items-center gap-4 mt-2">
+                @for (int i = 0; i <= 3; i++)
+                {
+                    <label class="flex items-center gap-1">
+                        <input type="radio" name="divineagony" value="@i" checked="@(character.DivineAgony == i)" @onchange="() => character.DivineAgony = i" class="form-radio text-purple-500" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <!-- Injury -->
+        <div>
+            <span class="block text-sm text-purple-500 mb-1">Injury</span>
+            <div class="flex items-center gap-4 mt-2">
+                @for (int i = 0; i <= 3; i++)
+                {
+                    <label class="flex items-center gap-1">
+                        <input type="radio" name="injury" value="@i" checked="@(character.Injury == i)" @onchange="() => character.Injury = i" class="form-radio text-purple-500" />
+                        <span>@i</span>
+                    </label>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sin Overflow - ocupa toda a largura abaixo -->
+    <div class="mt-6 w-full flex flex-col items-center">
+        <span class="block text-sm text-purple-500 mb-2">Sin Overflow</span>
+        <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            @for (int i = 0; i <= 10; i++)
+            {
+                <label class="flex items-center gap-1">
+                    <input type="radio" name="sinoverflow" value="@i" checked="@(character.SinOverflow == i)" @onchange="() => character.SinOverflow = i" class="form-radio text-purple-500" />
+                    <span>@i</span>
+                </label>
+            }
+        </div>
+    </div>
+</div>
+
+
 
 
     <div class="border border-white p-2">
