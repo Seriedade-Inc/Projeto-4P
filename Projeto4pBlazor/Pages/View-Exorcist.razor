@@ -1,0 +1,208 @@
+@page "/View-Exorcist/{CharacterId:long}"
+@using Projeto4pServer.DTOs
+@inject UserSession UserSession
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<PageTitle>View Exorcist</PageTitle>
+
+@if (loading)
+{
+    <div class="text-white p-8">Loading...</div>
+}
+else if (!hasAccess)
+{
+    <div class="text-red-500 p-8">Você não tem permissão para acessar este exorcista.</div>
+}
+else if (character == null)
+{
+    <div class="text-red-500 p-8">Exorcista não encontrado.</div>
+}
+else
+{
+<EditForm Model="@character">
+    <div class="grid grid-cols-3 grid-rows-[auto_auto_1fr] gap-2 p-4 text-purple-500 bg-black min-h-screen font-mono">
+      <div class="border border-white p-2 space-y-2">
+        <h2 class="font-bold text-purple-400">Exorcist Details</h2>
+        <!-- Linha com Name, XID e CAT-->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm">Name</label>
+            <input value="@character.Name" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">XID</label>
+            <input value="@character.CharacterXID" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">CAT</label>
+            <input value="@character.CAT" type="number" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+        </div>
+        <!-- Linha com Agenda e Blasphemy -->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm">Agendas</label>
+            <input value="@string.Join(", ", character.Agendas?.Select(a => a.Name) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">Blasphemies</label>
+            <input value="@string.Join(", ", character.Blasphemies?.Select(b => b.Name) ?? new List<string>())" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+        </div>
+        <!-- Linha com Gender, Height e Weight -->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm">Gender</label>
+            <input value="@character.Gender" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">Height</label>
+            <input value="@character.Heigth" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded uppercase" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">Weight</label>
+            <input value="@character.Weigth" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+        </div>
+        <!-- Linha com Eyes e Hair -->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label class="block text-sm">Eyes</label>
+            <input value="@character.EyeColor" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+          <div class="flex-1">
+            <label class="block text-sm">Hair</label>
+            <input value="@character.HairColor" type="text" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+          </div>
+        </div>
+      </div>
+      <div class="border border-white p-2">
+        <h2 class="font-bold text-purple-400">Kit</h2>
+        <div class="flex flex-col gap-2">
+          <label class="block text-sm">Kit Points</label>
+          <input value="@character.KitPoints" type="number" class="w-full bg-black border border-purple-500 text-white p-1 rounded" readonly />
+        </div>
+      </div>
+      <div class="border border-white p-2">
+        <h2 class="font-bold text-purple-400">Agenda Text</h2>
+        <textarea class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll" readonly>
+@string.Join("\n", character.Agendas?.Select(a => a.AgendaText) ?? new List<string>())
+        </textarea>
+      </div>
+      <div class="border h-100 border-white p-4">
+        <h2 class="font-bold text-purple-400">Exorcist Status</h2>
+        <div class="grid grid-cols-2 gap-x-16 gap-y-6 mt-4">
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">XP</span>
+            <span class="text-white">@character.XP</span>
+          </div>
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">Advance</span>
+            <span class="text-white">@character.Advance</span>
+          </div>
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">Burst</span>
+            <span class="text-white">@character.Burst</span>
+          </div>
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">Stress</span>
+            <span class="text-white">@character.Stress / 6</span>
+          </div>
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">Divine Agony</span>
+            <span class="text-white">@character.DivineAgony</span>
+          </div>
+          <div>
+            <span class="block text-sm text-purple-500 mb-1">Injury</span>
+            <span class="text-white">@character.Injury</span>
+          </div>
+        </div>
+        <div class="mt-6 w-full flex flex-col items-center">
+          <span class="block text-sm text-purple-500 mb-2">Sin Overflow</span>
+          <span class="text-white">@character.SinOverflow</span>
+        </div>
+      </div>
+      <div class="border border-white p-2">
+        <h2 class="font-bold text-purple-400">Skills</h2>
+        @if (character.CharacterSkills != null)
+        {
+          <table class="w-full text-left text-white">
+            <thead>
+              <tr>
+                <th class="w-1/4"></th>
+                <th class="text-center">Value</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-purple-500">
+              <tr><td class="py-1">Force</td><td class="text-center">@character.CharacterSkills.Force</td></tr>
+              <tr><td class="py-1">Conditioning</td><td class="text-center">@character.CharacterSkills.Conditioning</td></tr>
+              <tr><td class="py-1">Coordination</td><td class="text-center">@character.CharacterSkills.Coordination</td></tr>
+              <tr><td class="py-1">Covert</td><td class="text-center">@character.CharacterSkills.Covert</td></tr>
+              <tr><td class="py-1">Interfacing</td><td class="text-center">@character.CharacterSkills.Interfacing</td></tr>
+              <tr><td class="py-1">Investigation</td><td class="text-center">@character.CharacterSkills.Investigation</td></tr>
+              <tr><td class="py-1">Surveillance</td><td class="text-center">@character.CharacterSkills.Surveillance</td></tr>
+              <tr><td class="py-1">Negotiation</td><td class="text-center">@character.CharacterSkills.Negotiation</td></tr>
+              <tr><td class="py-1">Authority</td><td class="text-center">@character.CharacterSkills.Authority</td></tr>
+              <tr><td class="py-1">Connection</td><td class="text-center">@character.CharacterSkills.Connection</td></tr>
+            </tbody>
+          </table>
+        }
+        else
+        {
+          <div class="text-gray-400">No skills data.</div>
+        }
+      </div>
+      <div class="border border-white p-2">
+        <h2 class="font-bold text-purple-400">Blasphemy Text</h2>
+        <textarea class="w-full h-85 mt-2 p-2 bg-black text-white border border-black resize-none overflow-y-scroll" readonly>
+@string.Join("\n", character.Blasphemies?.Select(b => b.BlasphemyText) ?? new List<string>())
+        </textarea>
+      </div>
+    </div>
+</EditForm>
+}
+
+@code {
+    [Parameter]
+    public long CharacterId { get; set; }
+
+    private CharacterDto? character;
+    private bool loading = true;
+    private bool hasAccess = false;
+    private readonly Guid adminId = new Guid("01978a0f-8c46-7a95-a278-e19886de81a2");
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (UserSession.UserId == null)
+        {
+            NavigationManager.NavigateTo("/");
+            return;
+        }
+
+        try
+        {
+            character = await Http.GetFromJsonAsync<CharacterDto>($"api/User/Character/by-id/{CharacterId}");
+        }
+        catch
+        {
+            character = null;
+        }
+
+        if (character == null)
+        {
+            Console.WriteLine($"Character not found for ID: {CharacterId}");
+            NavigationManager.NavigateTo("/"); // Redireciona pra home se o personagem nao existir
+            return;
+        }
+        else if ((UserSession.UserId != null && character.UserId == UserSession.UserId) || UserSession.UserId == adminId)
+        {
+            hasAccess = true;
+        }
+        else
+        {
+            hasAccess = false;
+        }
+        loading = false;
+    }
+}

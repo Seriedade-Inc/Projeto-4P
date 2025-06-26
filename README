@@ -1,5 +1,11 @@
 # Projeto 4P — Documentação de Boas Práticas
 
+## Integrantes
+- Arthur Pereira / 06006065
+- Matheus Cunha / 06006159
+- Vitor Garcia / 06006002
+- Miguel Chaves / 06006125
+
 ## 1. Organização em camadas
 
 - **Apresentação:** `Controllers/`
@@ -119,6 +125,8 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 
 - **Consistência e feedback visual (CSS/Componentes):**
   - Exemplo: `wwwroot/css/site.css` (linhas 1-50)
+  - Pages/Sin-Registry.razor (linhas 4–5)
+
 
 ---
 

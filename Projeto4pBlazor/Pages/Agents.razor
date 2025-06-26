@@ -4,6 +4,17 @@
 @using Projeto4pServer.DTOs
 @inject NavigationManager NavigationManager
 
+<style>
+.agent-card {
+    transition: box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+.agent-card:hover {
+    box-shadow: 0 0 0 4px #a78bfa, 0 0 16px 4px #a78bfa;
+    border-color: #a78bfa;
+}
+</style>
+
 <main>
     <div class="flex flex-wrap justify-center bg-black text-white p-4 min-h-screen">
         @if (characters == null)
@@ -18,7 +29,10 @@
         {
             @foreach (var character in characters)
             {
-                <div class="bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64 h-128 overflow-y-auto">
+                // character.Id is the CharacterId property from CharacterDto
+                // It is passed to the View-Exorcist page via the URL parameter
+                <div class="agent-card bg-neutral-800 rounded-lg shadow-lg p-4 m-4 w-64 h-128 overflow-y-auto border-2 border-transparent"
+                     @onclick="@(() => NavigationManager.NavigateTo($"/View-Exorcist/{character.Id}"))">
                     <h2 class="text-xl font-bold text-purple-400">@character.Name</h2>
                     <p><strong>Id do Usuário:</strong> @character.UserId</p>
                     <p><strong>Age:</strong> @character.CAT</p>

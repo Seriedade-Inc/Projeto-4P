@@ -47,6 +47,17 @@ namespace Projeto4pServer.Controllers
             return Ok(characters);
         }
 
+        // GET: api/User/Character/{id}
+        [HttpGet("by-id/{id:long}")]
+        public async Task<IActionResult> GetCharacterById(long id)
+        {
+            var character = await _service.GetCharacterByIdAsync(id);
+            if (character == null)
+                return NotFound("Character not found.");
+
+            return Ok(character);
+        }
+
         [HttpPost("create/{userId:guid}")] // userId na rota para criação
         public async Task<IActionResult> CreateCharacter(Guid userId, [FromBody] CreateCharacterDto characterDto)
         {
