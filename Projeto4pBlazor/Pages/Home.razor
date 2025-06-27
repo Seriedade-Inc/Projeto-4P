@@ -5,6 +5,8 @@
 
 <PageTitle>Home</PageTitle>
 
+<!-- esquema de botões principais da home -->
+
 <main>
   <div class="flex min-h-screen min-w-full flex-row justify-start bg-black text-purple-800">
     <div class="mt-24 ml-6 flex flex-col items-start gap-2">
@@ -55,6 +57,7 @@
 }
 
 @code {
+                <!-- código de condição para acessar acessar páginas da home -->
     private bool showLoginPopup = false;
 
     private void NavigateIfLoggedIn(string url)

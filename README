@@ -155,12 +155,36 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 
 ## 10. Heurísticas de usabilidade no frontend
 
-- **Consistência e feedback visual (CSS/Componentes):**
-  - Exemplo: `wwwroot/css/site.css` (linhas 1-50)
-  - `Pages/Sin-Registry.razor` (imagem centralizada)
-  - `Layout/MainLayout.razor` (botão de rolagem de dados com efeito visual)
-  - Validação visual de formulários em `Pages/Create-Character.razor`
+- **Visibilidade do Status do Sistema**
+  - `Pages/New-Exorcist.razor` (linhas 17-354, Os campos são divididos em caixas que representam etapas diferentes na criação do personagem.)
+  - `Pages/Home.razor` (linhas 49-57, caso o usuário esteja logado e tente entrar em uma página, o sistema avisa ela que não está logado.)
+  
+- **Correspondência entre o sistema e o mundo real**
+  - `Pages/Home.razor` (linhas 10-36, Resume de maneira direta o que o botão faz em um texto mais apagado abaixo do botão.)
+  
+- **Controle e liberdade para o usuário**
+  - `Pages/MainLayout.razor` (linhas 7-11, A logo do site, TEMERITY, é um link constantemente disponível que automaticamente leva para a homepage.)
+  
+- **Consistência e padronização**
+  - `Pages/Home.razor` e `Pages/New-Exorcist.razor` (linhas 10-36 e linhas 17-354, Títulos como NEW EXORCIST, AGENTS, SIN REGISTRY e campos nos formulários usam uma mesma fonte estilizada e o uso de cores nos destaques tornam o estilo consistente.)
+  
+- **Prevenção de erros**
+  - `Pages/MainLayout.razor` (linhas 23-33, o usuário precisa confirmar se quer dar logout ou não.)
+  
+- **Reconhecimento em vez de recordação**
+  - `Pages/MainLayout.razor` (linhas 7-36, O usuário pode encontrar o botão de login e um cumprimento típico no canto superior direito e a logo do site no canto superior esquerdo.)
+  
+- **Eficiência e flexibilidade de uso**
+  - `Pages/New-Exorcist.razor` (linhas 17-354, A tela de criação de exorcista distribui os campos em blocos separados, permitindo que o usuário vá direto ao que precisa e o botão REGISTER destacado na parte inferior permite registro imediato sem navegação extra.)
+  
+- **Estética e design minimalista**
+  - `Pages/MainLayout.razor`, `Pages/Home.razor` e `Pages/New-Exorcist.razor` (linhas 7-11, linhas 10-36 e linhas 17-354, O site possui uma paleta escura e elementos em roxo e rosa consistentemente e é minimalista tanto estilisticamente quanto funcionalmente.)
 
+- **Ajude os usuários a reconhecer, diagnosticar e recuperar erros**
+  - `Pages/Agents.razor` (linhas 24-27, se o usuário não tiver nenhum personagem registrado, o sistema o avisa e apresenta a opção de criar um personagem.)
+
+- **Ajuda e documentação**
+  - A Documentação é o sistema de rpg em si 
 ---
 
 > **Observação:** Os números de linhas podem variar conforme alterações futuras. Consulte sempre a versão mais recente do repositório.

@@ -7,6 +7,11 @@
 
 <PageTitle>View Exorcist</PageTitle>
 
+<!-- Esta página é uma cópia do new exorcist
+     Só que ela transplanta as informações do back end nos campos da ficha -->
+
+
+<!-- Loading de personagem com condição pra barrar quem não tem permissão -->
 @if (loading)
 {
     <div class="text-white p-8">Loading...</div>
@@ -173,6 +178,7 @@ else
     private bool hasAccess = false;
     private readonly Guid adminId = new Guid("01978a0f-8c46-7a95-a278-e19886de81a2");
 
+    <!-- task pra buscar personagem -->
     protected override async Task OnInitializedAsync()
     {
         if (UserSession.UserId == null)

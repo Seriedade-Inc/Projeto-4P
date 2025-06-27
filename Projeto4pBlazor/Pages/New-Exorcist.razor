@@ -83,7 +83,7 @@
 
   </div>
 
-
+<!-- área de inventário (ainda em andamento) -->
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Registered Kit</h2>
 
@@ -105,6 +105,7 @@
     </div> 
    </div> 
 
+<!-- caixa de texto da agenda -->
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Agenda Text</h2>
         <textarea
@@ -117,7 +118,7 @@
 <div class="border h-100 border-white p-4">
     <h2 class="font-bold text-purple-400">Exorcist Status</h2>
 
-    <!-- Usamos grid para melhor controle de layout -->
+    <!-- grid para melhor controle de layout -->
     <div class="grid grid-cols-2 gap-x-16 gap-y-6 mt-4">
         <!-- XP -->
         <div>
@@ -161,7 +162,7 @@
             </div>
         </div>
 
-        <!-- Stress (como x/6) -->
+        <!-- Stress -->
         <div class="flex flex-col ml-6">
             <span class="block text-sm text-purple-500 mb-1">Stress</span>
             <div class="flex items-center gap-2">
@@ -203,7 +204,7 @@
         </div>
     </div>
 
-    <!-- Sin Overflow - ocupa toda a largura abaixo -->
+    <!-- Sin Overflow -->
     <div class="mt-6 w-full flex flex-col items-center">
         <span class="block text-sm text-purple-500 mb-2">Sin Overflow</span>
         <div class="flex flex-wrap justify-center gap-x-6 gap-y-2">
@@ -220,6 +221,7 @@
 
 
 
+<!-- Caixa das Skills (ainda em andamento) -->
 
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Registered Skills</h2>
@@ -333,7 +335,7 @@
     </div> 
       
       
-
+<!-- caixa de texto pra blasphemy -->
     <div class="border border-white p-2">
       <h2 class="font-bold text-purple-400">Blasphemy Text</h2>
       <textarea
@@ -343,7 +345,7 @@
     </div>
 
 
-        
+        <!-- botão de registro -->
         <div class="col-span-3 justify-end mt-4">
             <button type="submit" class="bg-purple-500 text-black font-bold px-6 py-2 rounded">REGISTER</button>
         </div>
@@ -358,9 +360,10 @@
     private string agendaName = string.Empty;
     private string agendaText = string.Empty;
 
-
+    <!-- campo da task de registrar personagem -->
     private async Task RegisterExorcist()
     {
+      <!-- prevenção de registro nulo -->
         if (UserSession.UserId == null)
         {
             Console.WriteLine("Usuário não identificado.");
@@ -375,20 +378,18 @@
         {
             // Pegue o personagem criado (com Id)
             var createdCharacter = await response.Content.ReadFromJsonAsync<CharacterDto>();
-            // ...existing code...
+
             if (createdCharacter != null)
             {
-                // LOG: Veja o valor retornado do personagem criado
-                Console.WriteLine($"createdCharacter.Id: {createdCharacter.Id}");
 
-                // Monte o DTO de Blasphemy
+                // Montagem do DTO de Blasphemy
                 var blasphemyDto = new BlasphemyDto
                 {
                     CharacterId = createdCharacter.Id,
                     BlasphemyName = blasphemyName,
                     BlasphemyText = blasphemyText
                 };
-
+                <!-- mensagem de confirmação de registro de blasphemy -->
                 var blasphemyResponse = await Http.PostAsJsonAsync("api/Blasphemy", blasphemyDto);
 
                 if (blasphemyResponse.IsSuccessStatusCode)
@@ -396,7 +397,7 @@
                 else
                     Console.WriteLine("Erro ao registrar Blasphemy.");
 
-                // Monte o DTO de Agenda
+                // Montagem do DTO de Agenda
                 var agendaDto = new AgendaDto
                 {
                     CharacterId = createdCharacter.Id,
@@ -404,9 +405,7 @@
                     AgendaText = agendaText
                 };
 
-                // LOG: Veja o conteúdo do DTO de Agenda antes de enviar
-                Console.WriteLine($"AgendaDto: CharacterId={agendaDto.CharacterId}, AgendaName={agendaDto.AgendaName}, AgendaText={agendaDto.AgendaText}");
-
+                <!-- mensagem de confirmação de registro de agenda -->
                 var agendaResponse = await Http.PostAsJsonAsync("api/Agenda", agendaDto);
 
                 if (agendaResponse.IsSuccessStatusCode)
