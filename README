@@ -184,7 +184,7 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
   - `Pages/Agents.razor` (linhas 24-27, se o usuário não tiver nenhum personagem registrado, o sistema o avisa e apresenta a opção de criar um personagem.)
 
 - **Ajuda e documentação**
-  - A Documentação é o sistema de rpg em si 
+  - A Documentação é o sistema de rpg em si https://tombloom.itch.io/cain
 ---
 
 > **Observação:** Os números de linhas podem variar conforme alterações futuras. Consulte sempre a versão mais recente do repositório.
