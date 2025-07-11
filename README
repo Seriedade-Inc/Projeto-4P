@@ -1,6 +1,7 @@
 # Projeto 4P — Documentação de Boas Práticas
 
 ## Integrantes
+
 - Arthur Pereira / 06006065
 - Matheus Cunha / 06006159
 - Vitor Garcia / 06006002
@@ -8,7 +9,7 @@
 
 ## Link do vídeo
 
-### [Vídeo]()
+### [Vídeo](https://drive.google.com/drive/folders/1atQrYuffCZiw1yYPnaaC6V0RgTGaS4Oy?usp=sharing)
 
 ## 1. Organização em camadas
 
@@ -124,7 +125,6 @@ public class DeleteService<T> where T : class
 
 - [`Projeto4pServer`](Projeto4pServer\Services\CharacterService.cs) (linhas 134 a 144)
 
-
 Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<T>` e usar `DeleteAsync(id)`.
 
 - **Outras refatorações:**
@@ -158,33 +158,54 @@ Agora, todos os serviços que precisam de delete podem herdar de `DeleteService<
 - **Visibilidade do Status do Sistema**
   - `Pages/New-Exorcist.razor` (linhas 17-354, Os campos são divididos em caixas que representam etapas diferentes na criação do personagem.)
   - `Pages/Home.razor` (linhas 49-57, caso o usuário esteja logado e tente entrar em uma página, o sistema avisa ela que não está logado.)
-  
 - **Correspondência entre o sistema e o mundo real**
   - `Pages/Home.razor` (linhas 10-36, Resume de maneira direta o que o botão faz em um texto mais apagado abaixo do botão.)
-  
 - **Controle e liberdade para o usuário**
   - `Pages/MainLayout.razor` (linhas 7-11, A logo do site, TEMERITY, é um link constantemente disponível que automaticamente leva para a homepage.)
-  
 - **Consistência e padronização**
   - `Pages/Home.razor` e `Pages/New-Exorcist.razor` (linhas 10-36 e linhas 17-354, Títulos como NEW EXORCIST, AGENTS, SIN REGISTRY e campos nos formulários usam uma mesma fonte estilizada e o uso de cores nos destaques tornam o estilo consistente.)
-  
 - **Prevenção de erros**
   - `Pages/MainLayout.razor` (linhas 23-33, o usuário precisa confirmar se quer dar logout ou não.)
-  
 - **Reconhecimento em vez de recordação**
   - `Pages/MainLayout.razor` (linhas 7-36, O usuário pode encontrar o botão de login e um cumprimento típico no canto superior direito e a logo do site no canto superior esquerdo.)
-  
 - **Eficiência e flexibilidade de uso**
   - `Pages/New-Exorcist.razor` (linhas 17-354, A tela de criação de exorcista distribui os campos em blocos separados, permitindo que o usuário vá direto ao que precisa e o botão REGISTER destacado na parte inferior permite registro imediato sem navegação extra.)
-  
 - **Estética e design minimalista**
+
   - `Pages/MainLayout.razor`, `Pages/Home.razor` e `Pages/New-Exorcist.razor` (linhas 7-11, linhas 10-36 e linhas 17-354, O site possui uma paleta escura e elementos em roxo e rosa consistentemente e é minimalista tanto estilisticamente quanto funcionalmente.)
 
 - **Ajude os usuários a reconhecer, diagnosticar e recuperar erros**
+
   - `Pages/Agents.razor` (linhas 24-27, se o usuário não tiver nenhum personagem registrado, o sistema o avisa e apresenta a opção de criar um personagem.)
 
 - **Ajuda e documentação**
   - A Documentação é o sistema de rpg em si https://tombloom.itch.io/cain
+
 ---
 
 > **Observação:** Os números de linhas podem variar conforme alterações futuras. Consulte sempre a versão mais recente do repositório.
+
+# Correcao
+
+| Item | Situacao | Pontos |
+|------|----------|--------|
+| 1. Organizacao em camadas | Aprovado | 1 |
+| 2. Aplicacao de padroes de projeto | Aprovado | 1 |
+| 3. Principios SOLID em pratica | Aprovado | 1 |
+| 4. Convencoes de nomenclatura claras | Aprovado | 1 |
+| 5. Documentacao minima de codigo | Aprovado | 1 |
+| 6. Testes automatizados | Aprovado | 1 |
+| 7. Refatoracoes evidentes | Aprovado | 1 |
+| 8. Tratamento de erros e excecoes | Aprovado | 1 |
+| 9. Exemplos de validacao de entrada | Aprovado | 1 |
+| 10. Heuristicas de usabilidade no frontend | Aprovado | 1 |
+
+**Total 10 / 10**
+
+## Dicas extras
+
+Nem sempre e necessario criar uma interface para cada classe; mantenha interfaces so onde elas sao realmente uteis.
+
+Os repositorios podem herdar de uma classe abstrata que concentre operacoes basicas, reduzindo duplicacao e simplificando a manutencao.
+
+Parabens!!!
