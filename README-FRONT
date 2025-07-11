@@ -1,0 +1,18 @@
+## Integrantes
+- Arthur Pereira / 06006065
+- Matheus Cunha / 06006159
+- Vitor Garcia / 06006002
+- Miguel Chaves / 06006125
+
+## Descrição do Projeto
+
+Nosso projeto é um site de criação de fichas para o TTRPG CAIN, criado usando Blazor e Tailwind e aplicando boas práticas de programação e usabilidade para a melhor fluidez do uso.
+
+## Para fazer o projeto rodar
+
+1- Crie três terminais na sua IDE de escolha (Usamos VSCODE)
+2- Execute dotnet watch run dentro da "Projeto-4P\Projeto4pServer" para rodar o backend
+3- Execute dotnet watch run dentro da "Projeto-4P\Projeto4pBlazor" para rodar o Site
+4- npx @tailwindcss/cli -i ./Styles/input.css -o ./wwwroot/tailwind.css --watch dentro da "Projeto-4P\Projeto4pBlazor" para rodar o Tailwind
+5- Abra seu navegador principal
+6- Divirta-se
